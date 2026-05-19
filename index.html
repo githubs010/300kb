@@ -223,8 +223,8 @@
                 const constraints = {
                     video: {
                         facingMode: facingMode,
-                        width: { ideal: 1920 },
-                        height: { ideal: 1080 }
+                        width: { ideal: 3840 }, // Try for 4K resolution to improve text clarity
+                        height: { ideal: 2160 }
                     }
                 };
 
@@ -357,8 +357,8 @@
             // 1. Get cropped image as a canvas
             // We scale it down initially if it's huge to help with compression
             const croppedCanvas = cropper.getCroppedCanvas({
-                maxWidth: 2048,
-                maxHeight: 2048
+                maxWidth: 2500, // Increased max limits for sharper text
+                maxHeight: 2500
             });
 
             if (!croppedCanvas) {
@@ -366,11 +366,21 @@
                 return;
             }
 
+            // Enhance text clarity using canvas filters (Contrast & Brightness boost)
+            const enhancedCanvas = document.createElement('canvas');
+            enhancedCanvas.width = croppedCanvas.width;
+            enhancedCanvas.height = croppedCanvas.height;
+            const eCtx = enhancedCanvas.getContext('2d');
+            // Apply document scanner style enhancement
+            eCtx.filter = 'contrast(1.4) brightness(1.15) saturate(1.1)';
+            eCtx.drawImage(croppedCanvas, 0, 0);
+
             // 2. Compress the image to target size
             statusText.textContent = `Compressing to under ${TARGET_MAX_SIZE_KB}KB...`;
             
             try {
-                const resultBlob = await compressImageToTarget(croppedCanvas, TARGET_MAX_SIZE_BYTES);
+                // Pass the enhanced canvas to the compressor
+                const resultBlob = await compressImageToTarget(enhancedCanvas, TARGET_MAX_SIZE_BYTES);
                 
                 // Success
                 compressedImageBlob = resultBlob;
@@ -497,45 +507,16 @@
 
                         const pdfWidth = pdf.internal.pageSize.getWidth();
                         const pdfHeight = pdf.internal.pageSize.getHeight();
-                        const margin = 10;
-                        const maxImgWidth = pdfWidth - (margin * 2);
-                        const maxImgHeight = pdfHeight - (margin * 2) - 20;
                         
                         const img = new Image();
                         img.onload = () => {
-                            let imgWidth = img.width;
-                            let imgHeight = img.height;
-                            const ratio = imgWidth / imgHeight;
-                            
-                            if (imgWidth > maxImgWidth) {
-                                imgWidth = maxImgWidth;
-                                imgHeight = imgWidth / ratio;
-                            }
-                            if (imgHeight > maxImgHeight) {
-                                imgHeight = maxImgHeight;
-                                imgWidth = imgHeight * ratio;
-                            }
-                            
-                            const xOffset = (pdfWidth - imgWidth) / 2;
-                            const yOffset = margin + 15;
-
                             // Custom File Name
                             let fileName = fileNameInput.value.trim();
                             if (!fileName) fileName = 'Scanned_Document';
 
-                            // Add Title
-                            pdf.setFontSize(14);
-                            pdf.text(fileName, pdfWidth / 2, margin + 5, { align: "center" });
+                            // Draw image to fill the entire A4 page (0 margins)
+                            pdf.addImage(base64data, 'JPEG', 0, 0, pdfWidth, pdfHeight);
                             
-                            // Add Image
-                            pdf.addImage(base64data, 'JPEG', xOffset, yOffset, imgWidth, imgHeight);
-                            
-                            // Add Footer
-                            pdf.setFontSize(10);
-                            pdf.setTextColor(150);
-                            const dateStr = new Date().toLocaleString();
-                            pdf.text(`Generated on: ${dateStr}`, pdfWidth / 2, pdfHeight - margin, { align: "center" });
-
                             resolve({ pdf, fileName });
                         };
                         img.src = base64data;
