@@ -64,18 +64,17 @@
         }
     </style>
 </head>
-<body class="min-h-screen p-4 flex flex-col items-center">
+<body class="h-screen w-screen overflow-hidden bg-gray-900 flex justify-center text-gray-800">
 
-    <div class="max-w-lg w-full bg-white rounded-xl shadow-lg overflow-hidden">
+    <div class="w-full h-full max-w-md bg-white flex flex-col relative shadow-2xl">
         
         <!-- Header -->
-        <div class="bg-blue-600 p-4 text-white text-center">
-            <h1 class="text-2xl font-bold">Photo to PDF</h1>
-            <p class="text-sm opacity-80">Capture, Crop, Compress, Convert</p>
+        <div class="bg-blue-600 p-4 text-white text-center shadow-md z-10 flex-shrink-0">
+            <h1 class="text-xl font-bold tracking-wide">Scanner App</h1>
         </div>
 
         <!-- Main Content Area -->
-        <div class="p-4 sm:p-6">
+        <div class="flex-1 overflow-y-auto p-4 flex flex-col">
             
             <!-- Section 1: Camera View -->
             <div id="section-camera" class="flex flex-col gap-4">
@@ -134,28 +133,42 @@
                 </div>
 
                 <!-- Final Image Preview (Hidden initially) -->
-                 <div id="final-preview-container" class="hidden flex flex-col items-center gap-2">
-                    <p class="text-sm font-semibold text-gray-700">Preview (Compressed):</p>
-                    <img id="final-image" src="" alt="Final Output" class="max-w-full h-auto max-h-64 rounded shadow-sm border border-gray-300 object-contain">
-                    <p id="file-size-info" class="text-xs font-mono bg-gray-100 p-1 rounded"></p>
-                 </div>
+             <div id="final-preview-container" class="hidden flex flex-col items-center gap-2">
+                <p class="text-sm font-semibold text-gray-700">Preview (Compressed):</p>
+                <img id="final-image" src="" alt="Final Output" class="max-w-full h-auto max-h-48 rounded shadow-sm border border-gray-300 object-contain">
+                <p id="file-size-info" class="text-xs font-mono bg-gray-100 p-1 rounded"></p>
+             </div>
 
-                <!-- Action Buttons -->
-                <div id="result-actions" class="hidden flex flex-col gap-2 mt-4">
-                    <button id="download-pdf-btn" class="w-full py-3 bg-red-600 hover:bg-red-700 text-white rounded-lg font-bold shadow-md transition duration-300 flex justify-center items-center gap-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                        Download PDF
+            <!-- Action Buttons -->
+            <div id="result-actions" class="hidden flex flex-col gap-3 mt-auto pt-4 border-t border-gray-200">
+                
+                <div class="w-full">
+                    <label for="file-name-input" class="block text-sm font-medium text-gray-700 mb-1">File Name</label>
+                    <input type="text" id="file-name-input" value="Scanned_Document" class="block w-full rounded-lg border-gray-300 bg-gray-50 border p-3 text-gray-900 focus:border-blue-500 focus:ring-blue-500 outline-none transition" placeholder="Enter file name...">
+                </div>
+
+                <div class="flex gap-2">
+                    <button id="download-pdf-btn" class="w-1/2 py-3 bg-gray-800 hover:bg-gray-900 text-white rounded-lg font-bold shadow-md transition duration-300 flex justify-center items-center gap-2 text-sm">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                        Save PDF
                     </button>
-                    <button id="start-over-btn" class="w-full py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-lg font-medium transition duration-300">
-                        Start Over
+                    
+                    <button id="share-btn" class="w-1/2 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg font-bold shadow-md transition duration-300 flex justify-center items-center gap-2 text-sm">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+                        Share
                     </button>
                 </div>
-            </div>
 
+                <button id="start-over-btn" class="w-full py-3 mt-2 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-lg font-medium transition duration-300">
+                    Start Over
+                </button>
+            </div>
         </div>
+
     </div>
-    
-    <!-- Hidden Canvas for grabbing video frame -->
+</div>
+
+<!-- Hidden Canvas for grabbing video frame -->
     <canvas id="canvas-element"></canvas>
 
     <script>
@@ -184,6 +197,8 @@
         const retakeBtn = document.getElementById('retake-btn');
         const cropBtn = document.getElementById('crop-btn');
         const downloadPdfBtn = document.getElementById('download-pdf-btn');
+        const shareBtn = document.getElementById('share-btn');
+        const fileNameInput = document.getElementById('file-name-input');
         const startOverBtn = document.getElementById('start-over-btn');
         const fileInput = document.getElementById('file-input');
         
@@ -463,95 +478,125 @@
         }
 
         // --- PDF Generation Functions ---
-        downloadPdfBtn.addEventListener('click', async () => {
-            if (!compressedImageBlob) return;
+        
+        async function buildPDF() {
+            return new Promise((resolve, reject) => {
+                if (!compressedImageBlob) {
+                    reject("No image available");
+                    return;
+                }
 
-            const originalBtnText = downloadPdfBtn.innerHTML;
-            downloadPdfBtn.innerHTML = '<div class="loader" style="width: 20px; height: 20px; border-width: 2px;"></div> Generating PDF...';
-            downloadPdfBtn.disabled = true;
-
-            try {
-                // Convert Blob to Data URL for jsPDF
                 const reader = new FileReader();
                 reader.readAsDataURL(compressedImageBlob);
                 
                 reader.onloadend = () => {
-                    const base64data = reader.result;
-                    
-                    // Initialize jsPDF
-                    // Destructure jspdf from window object (since it's loaded via UMD script tag)
-                    const { jsPDF } = window.jspdf;
-                    
-                    // Create A4 PDF (portrait)
-                    const pdf = new jsPDF({
-                        orientation: 'portrait',
-                        unit: 'mm',
-                        format: 'a4'
-                    });
+                    try {
+                        const base64data = reader.result;
+                        const { jsPDF } = window.jspdf;
+                        const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
 
-                    // A4 dimensions in mm
-                    const pdfWidth = pdf.internal.pageSize.getWidth();
-                    const pdfHeight = pdf.internal.pageSize.getHeight();
-                    
-                    // Margins
-                    const margin = 10;
-                    const maxImgWidth = pdfWidth - (margin * 2);
-                    const maxImgHeight = pdfHeight - (margin * 2) - 20; // Leave space for title/footer
-                    
-                    // Get image dimensions to maintain aspect ratio
-                    const img = new Image();
-                    img.onload = () => {
-                        let imgWidth = img.width;
-                        let imgHeight = img.height;
+                        const pdfWidth = pdf.internal.pageSize.getWidth();
+                        const pdfHeight = pdf.internal.pageSize.getHeight();
+                        const margin = 10;
+                        const maxImgWidth = pdfWidth - (margin * 2);
+                        const maxImgHeight = pdfHeight - (margin * 2) - 20;
                         
-                        // Calculate aspect ratio
-                        const ratio = imgWidth / imgHeight;
-                        
-                        // Scale to fit width
-                        if (imgWidth > maxImgWidth) {
-                            imgWidth = maxImgWidth;
-                            imgHeight = imgWidth / ratio;
-                        }
-                        
-                        // Scale to fit height (if still too tall)
-                        if (imgHeight > maxImgHeight) {
-                            imgHeight = maxImgHeight;
-                            imgWidth = imgHeight * ratio;
-                        }
-                        
-                        // Center image horizontally
-                        const xOffset = (pdfWidth - imgWidth) / 2;
-                        // Position slightly below top margin
-                        const yOffset = margin + 10;
+                        const img = new Image();
+                        img.onload = () => {
+                            let imgWidth = img.width;
+                            let imgHeight = img.height;
+                            const ratio = imgWidth / imgHeight;
+                            
+                            if (imgWidth > maxImgWidth) {
+                                imgWidth = maxImgWidth;
+                                imgHeight = imgWidth / ratio;
+                            }
+                            if (imgHeight > maxImgHeight) {
+                                imgHeight = maxImgHeight;
+                                imgWidth = imgHeight * ratio;
+                            }
+                            
+                            const xOffset = (pdfWidth - imgWidth) / 2;
+                            const yOffset = margin + 15;
 
-                        // Add content to PDF
-                        pdf.setFontSize(14);
-                        pdf.text("Scanned Document", pdfWidth / 2, margin + 5, { align: "center" });
-                        
-                        // Add Image
-                        pdf.addImage(base64data, 'JPEG', xOffset, yOffset, imgWidth, imgHeight);
-                        
-                        // Add Footer
-                        pdf.setFontSize(10);
-                        pdf.setTextColor(150);
-                        const dateStr = new Date().toLocaleString();
-                        pdf.text(`Generated on: ${dateStr}`, pdfWidth / 2, pdfHeight - margin, { align: "center" });
+                            // Custom File Name
+                            let fileName = fileNameInput.value.trim();
+                            if (!fileName) fileName = 'Scanned_Document';
 
-                        // Save PDF
-                        pdf.save(`document_${new Date().getTime()}.pdf`);
-                        
-                        // Reset button
-                        downloadPdfBtn.innerHTML = originalBtnText;
-                        downloadPdfBtn.disabled = false;
-                    };
-                    img.src = base64data;
+                            // Add Title
+                            pdf.setFontSize(14);
+                            pdf.text(fileName, pdfWidth / 2, margin + 5, { align: "center" });
+                            
+                            // Add Image
+                            pdf.addImage(base64data, 'JPEG', xOffset, yOffset, imgWidth, imgHeight);
+                            
+                            // Add Footer
+                            pdf.setFontSize(10);
+                            pdf.setTextColor(150);
+                            const dateStr = new Date().toLocaleString();
+                            pdf.text(`Generated on: ${dateStr}`, pdfWidth / 2, pdfHeight - margin, { align: "center" });
+
+                            resolve({ pdf, fileName });
+                        };
+                        img.src = base64data;
+                    } catch (err) {
+                        reject(err);
+                    }
                 };
+            });
+        }
 
+        downloadPdfBtn.addEventListener('click', async () => {
+            const originalBtnText = downloadPdfBtn.innerHTML;
+            downloadPdfBtn.innerHTML = '<div class="loader" style="width: 18px; height: 18px; border-width: 2px;"></div> Saving...';
+            downloadPdfBtn.disabled = true;
+
+            try {
+                const { pdf, fileName } = await buildPDF();
+                pdf.save(`${fileName}.pdf`);
             } catch (error) {
                 console.error("PDF generation error:", error);
-                alert("An error occurred while generating the PDF.");
+                alert("An error occurred while saving the PDF.");
+            } finally {
                 downloadPdfBtn.innerHTML = originalBtnText;
                 downloadPdfBtn.disabled = false;
+            }
+        });
+
+        shareBtn.addEventListener('click', async () => {
+            const originalBtnText = shareBtn.innerHTML;
+            shareBtn.innerHTML = '<div class="loader" style="width: 18px; height: 18px; border-width: 2px;"></div> Prep...';
+            shareBtn.disabled = true;
+
+            try {
+                const { pdf, fileName } = await buildPDF();
+                
+                // Get the PDF as a Blob
+                const pdfBlob = pdf.output('blob');
+                
+                // Create a File object for sharing
+                const file = new File([pdfBlob], `${fileName}.pdf`, { type: 'application/pdf' });
+                
+                // Use Web Share API if supported
+                if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                    await navigator.share({
+                        title: fileName,
+                        text: 'Here is the scanned document.',
+                        files: [file]
+                    });
+                } else {
+                    alert("Direct file sharing is not supported on this browser/device. The file will be downloaded instead.");
+                    pdf.save(`${fileName}.pdf`);
+                }
+            } catch (error) {
+                console.error("Share error:", error);
+                // Don't alert if the user just cancelled the share popup
+                if (error.name !== 'AbortError') {
+                    alert("An error occurred while trying to share.");
+                }
+            } finally {
+                shareBtn.innerHTML = originalBtnText;
+                shareBtn.disabled = false;
             }
         });
 
