@@ -3,281 +3,584 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kalyana Karnataka Riders (💛❤️)</title>
-    <!-- SEO Meta Tags -->
-    <meta name="description" content="Kalyana Karnataka Riders - Bringing passionate riders together, educating new riders, and promoting public safety through social-awareness rides.">
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
-    <!-- Font Awesome for Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>Photo to PDF Converter</title>
     
-    <!-- Leaflet CSS for Map -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Cropper.js for image cropping -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+    
+    <!-- jsPDF for PDF generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
-    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+        #camera-container {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto;
+            aspect-ratio: 3/4; /* typical phone camera ratio */
+            background-color: #000;
+            overflow: hidden;
+            border-radius: 0.5rem;
+        }
+        #video-element {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Ensures video fills container without distortion */
+        }
+        #canvas-element {
+            display: none;
+        }
+        .cropper-container {
+             max-width: 100%;
+             margin: 0 auto;
+        }
+        #image-to-crop {
+            display: block;
+            max-width: 100%;
+        }
+        /* Custom Loader */
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3b82f6;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            vertical-align: middle;
+            margin-right: 10px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
 </head>
-<body>
-    
-    <nav id="navbar" class="glass-header">
-        <div class="nav-container">
-            <div class="logo">
-                <span class="logo-k">K</span><span class="logo-r">K</span><span class="logo-c">Riders</span>
-            </div>
-            <ul class="nav-links">
-                <li><a href="#home">Home</a></li>
-                <li><a href="#about">About</a></li>
-                <li><a href="#team">Team</a></li>
-                <li><a href="#guidelines">Guidelines</a></li>
-                <li><a href="#gallery">Gallery</a></li>
-                <li><a href="https://docs.google.com/forms/d/e/1FAIpQLSfO7H7Kot3DrUARanyuoGNmyT4O1b9tfrvotmCi9nnkM-Tblg/viewform?usp=publish-editor" target="_blank" class="btn btn-primary outlined">Register to Race</a></li>
-                <li><a href="admin.html" class="btn" style="background: var(--color-yellow); color: var(--color-bg); font-weight: bold;"><i class="fa-solid fa-lock"></i> Admin</a></li>
-            </ul>
-        </div>
-    </nav>
+<body class="min-h-screen p-4 flex flex-col items-center">
 
-    <!-- Header Section -->
-    <header class="hero" id="home">
-        <div class="hero-overlay"></div>
-        <div class="hero-content">
-            <div class="badge">EST. 2021</div>
-            <h1 class="main-title">Kalyana Karnataka <span class="gradient-text">Riders</span></h1>
-            <p class="motto">"Safety is greater than speed, friendship is more precious than the ride."</p>
-            <p class="motto-kannada">(ವೇಗಕ್ಕಿಂತ ಸುರಕ್ಷತೆ ದೊಡ್ಡದು, ರೈಡ್ಗಿಂತ ಸ್ನೇಹ ಅಮೂಲ್ಯ)</p>
-            
-            <div id="hero-events-list" style="display: flex; gap: 20px; overflow-x: auto; overflow-y: hidden; padding: 20px 10px; max-width: 100vw; scroll-snap-type: x mandatory; margin-left: -10px; margin-right: -10px;">
-                <!-- Upcoming events populated dynamically by main.js -->
-            </div>
-    </header>
-
-    <!-- Map Section -->
-    <section class="map-section" id="track" style="padding: 4rem 0;">
-        <div class="container section-header">
-            <h2>Live <span class="text-red">Race Tracker</span> & Route</h2>
-            <p>Tracking the route to our active event destination.</p>
-        </div>
-        <div class="container">
-            <div id="event-map" class="glass-card" style="height: 400px; width: 100%; border-radius: 12px; padding:0; overflow:hidden; border: 2px solid var(--color-red); z-index: 1;"></div>
-        </div>
-    </section>    <!-- About Section -->
-    <section class="about-section" id="about">
-        <div class="container section-header">
-            <h2>Our <span class="text-yellow">Vision</span></h2>
-        </div>
-        <div class="container grid-2-col">
-            <div class="card glass-card">
-                <div class="card-icon"><i class="fa-solid fa-eye"></i></div>
-                <h3>Vision</h3>
-                <p>Bringing passionate riders together, educating new riders, and promoting public safety through social-awareness rides.</p>
-            </div>
-            <div class="card glass-card">
-                <div class="card-icon"><i class="fa-solid fa-bullseye"></i></div>
-                <h3>Focus Areas</h3>
-                <ul class="custom-list">
-                    <li><i class="fa-solid fa-check"></i> Exploring nature and finding new trails</li>
-                    <li><i class="fa-solid fa-check"></i> Building a supportive community</li>
-                    <li><i class="fa-solid fa-check"></i> Promoting disciplined, responsible riding</li>
-                </ul>
-            </div>
-        </div>
-    </section>
-
-    <!-- Membership & Guidelines -->
-    <section class="guidelines-section" id="guidelines">
-        <div class="container section-header">
-            <h2>Club <span class="text-red">Rules & Regulations</span> 👇🏻</h2>
-        </div>
-        <div class="container">
-            <div class="rules-container glass-card padding-lg" style="display: flex; flex-direction: column; gap: 15px;">
-                <p><strong>🪧 Rule No: 01</strong><br>Do not post any unwanted or unrelated content in the group. Only biker-related posts are allowed.</p>
-                <div class="divider" style="margin: 5px 0;"></div>
-                <p><strong>🪧 Rule No: 02</strong><br>Club admins are not responsible for any buying or selling transactions made in the group or during rides.</p>
-                <div class="divider" style="margin: 5px 0;"></div>
-                <p><strong>🪧 Rule No: 03</strong><br>Overtaking fellow riders during the ride is strictly not allowed and will not be accepted.</p>
-                <div class="divider" style="margin: 5px 0;"></div>
-                <p><strong>🪧 Rule No: 04</strong><br>Team members should not change the club name or profile picture.</p>
-                <div class="divider" style="margin: 5px 0;"></div>
-                <p><strong>🪧 Rule No: 05</strong><br>👉 A Monthly contribution of ₹50/- is mandatory for all team members 👈<br>👉 This fee helps us manage administration, event coordination, and safety support. 💰 Payment Period: 1st to 15th of every month.</p>
-                <div class="divider" style="margin: 5px 0;"></div>
-                <p><strong>🪧 Rule No: 06</strong><br>Line discipline must be strictly followed by every rider during the ride.</p>
-                <div class="divider" style="margin: 5px 0;"></div>
-                <p><strong>🪧 Rule No: 07</strong><br>Dear riders, please respect all fellow riders and admins.</p>
-                <div class="divider" style="margin: 5px 0;"></div>
-                <p><strong>🪧 Rule No: 08</strong><br>No scope for racing during rides or any kind of caste or gender-based talk within the team.</p>
-                <div class="divider" style="margin: 5px 0;"></div>
-                <p><strong>🪧 Rule No: 09</strong><br>Following the instructions of Captains, Marshals, and Sweepers is mandatory.</p>
-                <div class="divider" style="margin: 5px 0;"></div>
-                <p><strong>🪧 Rule No: 10</strong><br>During the ride, the Captain, Marshals, and Sweepers will guide for everyone’s safety. Safety is our top priority.</p>
-                <div class="divider" style="margin: 5px 0;"></div>
-                <p><strong>🪧 Rule No: 11</strong><br>Admins have the right to terminate any member from the group at any time if they fail to follow the team’s rules and regulations.</p>
-                <div class="divider" style="margin: 5px 0;"></div>
-                <p><strong>🪧 Rule No: 12</strong><br>Every member must attend a minimum of 2 rides every 6 months. Otherwise, they will be removed from the team.</p>
-                <div class="divider" style="margin: 5px 0;"></div>
-                <p><strong>🪧 Rule No: 13</strong><br>During rides, only beverages like coffee or tea are sponsored by RRC.</p>
-                <div class="divider" style="margin: 5px 0;"></div>
-                <p><strong>🪧 Rule No: 14</strong><br>Once registration is done ✅, the registration fee is non-refundable.</p>
-                <div class="divider" style="margin: 5px 0;"></div>
-                <p><strong>🪧 Rule No: 15</strong><br>Before the ride flag-off, clear instructions and hand signal gestures will be shared and explained. Every rider must follow them during the ride.</p>
-                <div class="divider" style="margin: 5px 0;"></div>
-                <p><strong>🪧 Rule No: 16</strong><br>No scope for misunderstandings, politics, or friction within the club during or after rides. If noticed by admins, immediate termination will follow.</p>
-                <div class="divider" style="margin: 5px 0;"></div>
-                <p><strong>🪧 Rule No: 17</strong><br>No political agendas — national or local — are allowed within the club or during rides. Such actions are strictly prohibited.</p>
-                <div class="divider" style="margin: 5px 0;"></div>
-                <p><strong>🪧 Rule No: 18</strong><br>During rides, maintaining proper timing and discipline is mandatory.</p>
-                <div class="divider" style="margin: 5px 0;"></div>
-                <p><strong>🪧 Rule No: 19</strong><br>For any unwanted or unpleasant situations during rides or within the club, admins will not be held responsible.</p>
-                <div class="divider" style="margin: 5px 0;"></div>
-                <p><strong>🪧 Rule No: 20</strong><br>No one should interfere with individual safety, integrity, privacy, or individuality. Respect everyone equally.</p>
-                <div class="divider" style="margin: 5px 0;"></div>
-                <p><strong>🪧 Rule No: 21</strong><br>Let’s make every ride filled with joy, good memories, and positive vibes. A perfect getaway from our busy lives!</p>
-                <div class="divider" style="margin: 5px 0;"></div>
-                <p><strong>🪧 Rule No: 22</strong><br>If any rider joins another club, please choose one club and leave the other. Support only one club to keep it strong and united. 🏍️ Being in multiple clubs creates confusion and affects team spirit. Please respect the rules and stay loyal to one family. Otherwise, RRC will remove you from the club.</p>
-                <div class="divider" style="margin: 5px 0;"></div>
-                <p style="text-align: center; font-size: 1.2rem; margin-top: 10px;"><strong>🍀🏍️💨🎉🎊 Good Luck & Safe Rides!</strong></p>
-            </div>
-        </div>
-    </section>
-
-    <!-- Team Section -->
-    <section class="team-section" id="team">
-        <div class="container section-header">
-            <h2>Meet the <span class="text-yellow">Team</span></h2>
-        </div>
+    <div class="max-w-lg w-full bg-white rounded-xl shadow-lg overflow-hidden">
         
-        <div class="container">
-            <h3 class="sub-heading">Founders & Admins</h3>
-            <div class="team-grid top-tier">
-                <div class="team-card glass-card">
-                    <div class="avatar founder">P</div>
-                    <h4>Praveen</h4>
-                    <p>Founder / Co-Founder</p>
+        <!-- Header -->
+        <div class="bg-blue-600 p-4 text-white text-center">
+            <h1 class="text-2xl font-bold">Photo to PDF</h1>
+            <p class="text-sm opacity-80">Capture, Crop, Compress, Convert</p>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="p-4 sm:p-6">
+            
+            <!-- Section 1: Camera View -->
+            <div id="section-camera" class="flex flex-col gap-4">
+                <div id="camera-container" class="shadow-inner">
+                    <video id="video-element" autoplay playsinline></video>
                 </div>
-                <div class="team-card glass-card">
-                    <div class="avatar founder">D</div>
-                    <h4>Devaraj</h4>
-                    <p>Founder / Co-Founder</p>
-                </div>
-                <div class="team-card glass-card">
-                    <div class="avatar admin">B</div>
-                    <h4>Bharath Vishwanath</h4>
-                    <p>Admin</p>
+                
+                <div class="flex flex-col gap-2">
+                     <p class="text-sm text-gray-500 text-center mb-2" id="camera-status">Initializing camera...</p>
+                    
+                    <!-- File input fallback -->
+                    <label class="block text-center text-sm font-medium text-gray-700 cursor-pointer">
+                        Or select from gallery:
+                        <input type="file" id="file-input" accept="image/*" class="mt-1 block w-full text-sm text-slate-500
+                        file:mr-4 file:py-2 file:px-4
+                        file:rounded-full file:border-0
+                        file:text-sm file:font-semibold
+                        file:bg-blue-50 file:text-blue-700
+                        hover:file:bg-blue-100" />
+                    </label>
+
+                    <button id="capture-btn" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold shadow-md transition duration-300 disabled:opacity-50 flex justify-center items-center gap-2" disabled>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>
+                        Take Photo
+                    </button>
+                    
+                    <button id="switch-camera-btn" class="w-full py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-lg font-medium transition duration-300 flex justify-center items-center gap-2 hidden">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/></svg>
+                        Switch Camera
+                    </button>
                 </div>
             </div>
 
-            <h3 class="sub-heading margin-top-md">Team Leaders & Admins</h3>
-            <div class="team-grid">
-                <!-- Will be populated via JS or static -->
-                <div class="team-badge">Bharath BM</div>
-                <div class="team-badge">Arun Kumar</div>
-                <div class="team-badge">Dilip R</div>
-                <div class="team-badge">Kiran Basavaraj</div>
-                <div class="team-badge">Lokesh</div>
-                <div class="team-badge">Abhishek</div>
-                <div class="team-badge">Harshat KB</div>
-                <div class="team-badge">Rohith KR</div>
-                <div class="team-badge">Mrutyunjaya</div>
-                <div class="team-badge">Lakshmikantha</div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Top 10 Active Members (Monthly Spotlight) -->
-    <section class="spotlight-section">
-        <div class="container section-header">
-            <h2>Monthly <span class="text-red">Spotlight</span></h2>
-            <p>Top 10 Active Members this month</p>
-        </div>
-        <div class="container overflow-x">
-             <div class="spotlight-row" id="spotlight-container">
-                 <!-- Generated by JS -->
-             </div>
-        </div>
-    </section>
-
-    <!-- Race Leaderboard -->
-    <section class="race-section" id="race" style="padding: 4rem 0;">
-        <div class="container section-header">
-            <h2>Live <span class="text-yellow">Race Lap Times</span> 🏁</h2>
-            <p>Top times from the Kalyana Karnataka Riders track day.</p>
-        </div>
-        <div class="container" style="display: flex; flex-direction: column; align-items: center; gap: 2rem;">
-             <!-- Race Graphic -->
-             <img src="https://images.unsplash.com/photo-1558981420-c532902e58b4?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="Motorcycle Race Track Graphic" style="width: 100%; max-width: 800px; height: 300px; object-fit: cover; border-radius: 12px; border: 2px solid var(--color-red); box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
-             
-        <div class="container">
-             <div class="glass-card padding-lg" style="max-width: 600px; margin: 0 auto;">
-                 <ul id="main-leaderboard" style="list-style:none;">
-                      <!-- Populated dynamically by main.js if data exists, otherwise hidden/empty state -->
-                 </ul>
-                 <p id="no-race-data" style="text-align:center; color: var(--color-text-secondary);">No lap times recorded yet.</p>
-             </div>
-        </div>
-    </section>
-
-    <!-- Gallery Section -->
-    <section class="gallery-section" id="gallery">
-        <div class="container section-header">
-            <h2>Ride <span class="text-yellow">Memories</span></h2>
-        </div>
-        <div class="container gallery-grid" id="gallery-container">
-            <div class="gallery-item glass-card image-loading" data-caption="Kalyana Karnataka Riders">
-               <!-- Instagram Page Picture -->
-               <img id="gallery-img-1" src="https://scontent.cdninstagram.com/v/t51.82787-19/655176700_17868292920595427_4963013409995020672_n.jpg?stp=dst-jpg_s100x100_tt6&amp;_nc_cat=103&amp;ccb=7-5&amp;_nc_sid=bf7eb4&amp;efg=eyJ2ZW5jb2RlX3RhZyI6InByb2ZpbGVfcGljLnd3dy4xMDgwLkMzIn0%3D&amp;_nc_ohc=0d7-zomwKKIQ7kNvwGinpoV&amp;_nc_oc=AdomvIEwTad7LTvRI7k6-Y2gHHMV24EuHssQyhnYQpVM5uJY6SlS6XdvLIlxw2y2jbU&amp;_nc_zt=24&amp;_nc_ht=scontent.cdninstagram.com&amp;_nc_gid=CGPVXs31NomnZEMUSgwbrQ&amp;_nc_ss=7a20f&amp;oh=00_Af3huJr5eYpSnCqHGHqcXhAgbGw9FEGXIv2JJLmFhGcfVA&amp;oe=69ECB7A7" alt="KK Riders Instagram Pic" loading="lazy" style="object-fit: cover;">
-               <div class="gallery-caption">KK Riders (IG)</div>
-            </div>
-            <div class="gallery-item glass-card image-loading" data-caption="Shivaratri Night Out">
-               <img id="gallery-img-2" src="file:///C:/Users/prasad.j/.gemini/antigravity/brain/2eb037b9-796f-4c8d-a754-7ff4f1ba32cd/hero_background_1776745326328.png" alt="Shivaratri Night Out" loading="lazy">
-               <div class="gallery-caption">Shivaratri Night Out</div>
-            </div>
-            <div class="gallery-item glass-card image-loading" data-caption="Coorg Mandalpatti">
-               <img id="gallery-img-3" src="file:///C:/Users/prasad.j/.gemini/antigravity/brain/2eb037b9-796f-4c8d-a754-7ff4f1ba32cd/coorg_ride_1776745377191.png" alt="Coorg Mandalpatti" loading="lazy">
-               <div class="gallery-caption">Coorg Mandalpatti</div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Contact & Footer -->
-    <footer id="contact" class="footer">
-        <div class="container footer-grid">
-            <div class="footer-info">
-                <div class="logo">
-                     <span class="logo-k">K</span><span class="logo-r">K</span><span class="logo-c">Riders</span>
+            <!-- Section 2: Crop View -->
+            <div id="section-crop" class="hidden flex flex-col gap-4">
+                <div class="bg-gray-100 p-2 rounded-lg border border-gray-200">
+                    <img id="image-to-crop" src="" alt="Image to crop">
                 </div>
-                <p>Ensuring disciplined, responsible riding and leaving no one behind.</p>
-                <div class="contact-details">
-                    <p><i class="fa-solid fa-phone"></i> General: 7411625450</p>
-                    <p><i class="fa-solid fa-phone"></i> Devaraj (Founder): 8880362862</p>
+                
+                <div class="flex gap-2">
+                    <button id="retake-btn" class="w-1/3 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg font-medium transition duration-300">
+                        Retake
+                    </button>
+                    <button id="crop-btn" class="w-2/3 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-semibold shadow-md transition duration-300 flex justify-center items-center">
+                        Crop & Compress
+                    </button>
                 </div>
             </div>
-            <div class="footer-links">
-                <h3>Quick Links</h3>
-                <ul>
-                    <li><a href="#about">About</a></li>
-                    <li><a href="#guidelines">Rules & Guidelines</a></li>
-                    <li><a href="#gallery">Gallery</a></li>
-                </ul>
-            </div>
-            <div class="footer-social">
-                <h3>Connect With Us</h3>
-                <p>Social Media Partner: <strong>Harshat KB (Karnataka Biker)</strong></p>
-                <div class="social-icons">
-                    <a href="https://www.instagram.com/kkriderz_?igsh=MXBteW55YTR0a3l0Zw==" target="_blank" class="icon"><i class="fa-brands fa-instagram"></i></a>
-                    <a href="#" class="icon"><i class="fa-brands fa-youtube"></i></a>
-                    <a href="https://docs.google.com/forms/d/e/1FAIpQLSfO7H7Kot3DrUARanyuoGNmyT4O1b9tfrvotmCi9nnkM-Tblg/viewform?usp=publish-editor" target="_blank" class="icon"><i class="fa-solid fa-flag-checkered"></i></a>
-                </div>
-                <a href="https://docs.google.com/forms/d/e/1FAIpQLSfO7H7Kot3DrUARanyuoGNmyT4O1b9tfrvotmCi9nnkM-Tblg/viewform?usp=publish-editor" target="_blank" class="btn btn-primary margin-top-sm">Register as Racer</a>
-            </div>
-        </div>
-        <div class="copyright">
-            <p>&copy; 2021-2026 Kalyana Karnataka Riders. All Rights Reserved. | <a href="admin.html" style="color:var(--color-text-secondary); text-decoration:none;">Admin Portal</a></p>
-        </div>
-    </footer>
 
-    <!-- Leaflet JS -->
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-    <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
-    <script src="main.js"></script>
+            <!-- Section 3: Processing & Result View -->
+            <div id="section-result" class="hidden flex flex-col gap-4">
+                
+                <!-- Status Box -->
+                <div id="processing-status" class="bg-blue-50 border border-blue-200 p-4 rounded-lg flex items-center justify-center text-blue-800 font-medium hidden">
+                    <div class="loader"></div> <span id="status-text">Processing image...</span>
+                </div>
+
+                <!-- Final Image Preview (Hidden initially) -->
+                 <div id="final-preview-container" class="hidden flex flex-col items-center gap-2">
+                    <p class="text-sm font-semibold text-gray-700">Preview (Compressed):</p>
+                    <img id="final-image" src="" alt="Final Output" class="max-w-full h-auto max-h-64 rounded shadow-sm border border-gray-300 object-contain">
+                    <p id="file-size-info" class="text-xs font-mono bg-gray-100 p-1 rounded"></p>
+                 </div>
+
+                <!-- Action Buttons -->
+                <div id="result-actions" class="hidden flex flex-col gap-2 mt-4">
+                    <button id="download-pdf-btn" class="w-full py-3 bg-red-600 hover:bg-red-700 text-white rounded-lg font-bold shadow-md transition duration-300 flex justify-center items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                        Download PDF
+                    </button>
+                    <button id="start-over-btn" class="w-full py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-lg font-medium transition duration-300">
+                        Start Over
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    
+    <!-- Hidden Canvas for grabbing video frame -->
+    <canvas id="canvas-element"></canvas>
+
+    <script>
+        // --- State and Variables ---
+        const TARGET_MAX_SIZE_KB = 300;
+        const TARGET_MAX_SIZE_BYTES = TARGET_MAX_SIZE_KB * 1024;
+        
+        let stream = null;
+        let cropper = null;
+        let currentFacingMode = 'environment'; // Default to back camera
+        let compressedImageBlob = null; // Store final blob for PDF
+        
+        // --- DOM Elements ---
+        // Sections
+        const sectionCamera = document.getElementById('section-camera');
+        const sectionCrop = document.getElementById('section-crop');
+        const sectionResult = document.getElementById('section-result');
+        
+        // Video/Canvas
+        const video = document.getElementById('video-element');
+        const canvas = document.getElementById('canvas-element');
+        
+        // Buttons
+        const captureBtn = document.getElementById('capture-btn');
+        const switchCameraBtn = document.getElementById('switch-camera-btn');
+        const retakeBtn = document.getElementById('retake-btn');
+        const cropBtn = document.getElementById('crop-btn');
+        const downloadPdfBtn = document.getElementById('download-pdf-btn');
+        const startOverBtn = document.getElementById('start-over-btn');
+        const fileInput = document.getElementById('file-input');
+        
+        // Images/Info
+        const imageToCrop = document.getElementById('image-to-crop');
+        const finalImage = document.getElementById('final-image');
+        const fileSizeInfo = document.getElementById('file-size-info');
+        const cameraStatus = document.getElementById('camera-status');
+        
+        // Processing UI
+        const processingStatus = document.getElementById('processing-status');
+        const statusText = document.getElementById('status-text');
+        const finalPreviewContainer = document.getElementById('final-preview-container');
+        const resultActions = document.getElementById('result-actions');
+
+        // --- Camera Functions ---
+        async function startCamera(facingMode = 'environment') {
+            stopCamera(); // Ensure previous stream is closed
+
+            try {
+                // Constraints for modern mobile cameras
+                const constraints = {
+                    video: {
+                        facingMode: facingMode,
+                        width: { ideal: 1920 },
+                        height: { ideal: 1080 }
+                    }
+                };
+
+                stream = await navigator.mediaDevices.getUserMedia(constraints);
+                video.srcObject = stream;
+                
+                // Wait for video metadata to load before enabling capture
+                video.onloadedmetadata = () => {
+                    video.play();
+                    captureBtn.disabled = false;
+                    cameraStatus.textContent = "Camera ready.";
+                    cameraStatus.className = "text-sm text-green-600 text-center mb-2";
+                };
+
+                // Check if multiple cameras exist to show switch button
+                const devices = await navigator.mediaDevices.enumerateDevices();
+                const videoDevices = devices.filter(device => device.kind === 'videoinput');
+                if (videoDevices.length > 1) {
+                    switchCameraBtn.classList.remove('hidden');
+                }
+
+            } catch (err) {
+                console.error("Error accessing camera:", err);
+                cameraStatus.textContent = "Camera access denied or unavailable. Use file upload.";
+                cameraStatus.className = "text-sm text-red-500 text-center mb-2 font-semibold";
+                captureBtn.disabled = true;
+                
+                // Inform user about using the fallback
+                alert("Could not access camera. Please ensure permissions are granted, or use the 'select from gallery' option.");
+            }
+        }
+
+        function stopCamera() {
+            if (stream) {
+                const tracks = stream.getTracks();
+                tracks.forEach(track => track.stop());
+                video.srcObject = null;
+            }
+        }
+
+        switchCameraBtn.addEventListener('click', () => {
+            currentFacingMode = currentFacingMode === 'environment' ? 'user' : 'environment';
+            cameraStatus.textContent = "Switching camera...";
+            cameraStatus.className = "text-sm text-gray-500 text-center mb-2";
+            captureBtn.disabled = true;
+            startCamera(currentFacingMode);
+        });
+
+        captureBtn.addEventListener('click', () => {
+            // Draw video frame to canvas
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            
+            // Convert to data URL and proceed to crop
+            const imageUrl = canvas.toDataURL('image/jpeg');
+            loadCropper(imageUrl);
+        });
+
+        // Handle File Input (Fallback)
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    loadCropper(event.target.result);
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // --- Cropping Functions ---
+        function loadCropper(imageUrl) {
+            stopCamera(); // Stop camera to save resources
+            
+            // UI Switch
+            sectionCamera.classList.add('hidden');
+            sectionCrop.classList.remove('hidden');
+            
+            // Set image source
+            imageToCrop.src = imageUrl;
+            
+            // Initialize Cropper.js
+            if (cropper) {
+                cropper.destroy();
+            }
+            
+            // Need a slight delay to ensure image is rendered before attaching cropper
+            setTimeout(() => {
+                 cropper = new Cropper(imageToCrop, {
+                    viewMode: 2, // Restrict crop box not to exceed size of canvas
+                    dragMode: 'move',
+                    autoCropArea: 0.9,
+                    restore: false,
+                    guides: true,
+                    center: true,
+                    highlight: false,
+                    cropBoxMovable: true,
+                    cropBoxResizable: true,
+                    toggleDragModeOnDblclick: false,
+                });
+            }, 100);
+        }
+
+        retakeBtn.addEventListener('click', () => {
+            if (cropper) {
+                cropper.destroy();
+                cropper = null;
+            }
+            fileInput.value = ''; // Reset file input
+            sectionCrop.classList.add('hidden');
+            sectionCamera.classList.remove('hidden');
+            startCamera(currentFacingMode);
+        });
+
+        // --- Compression Functions ---
+        cropBtn.addEventListener('click', async () => {
+            if (!cropper) return;
+
+            // UI Switch to processing
+            sectionCrop.classList.add('hidden');
+            sectionResult.classList.remove('hidden');
+            
+            processingStatus.classList.remove('hidden');
+            finalPreviewContainer.classList.add('hidden');
+            resultActions.classList.add('hidden');
+            statusText.textContent = "Cropping image...";
+
+            // 1. Get cropped image as a canvas
+            // We scale it down initially if it's huge to help with compression
+            const croppedCanvas = cropper.getCroppedCanvas({
+                maxWidth: 2048,
+                maxHeight: 2048
+            });
+
+            if (!croppedCanvas) {
+                alert("Failed to crop image.");
+                return;
+            }
+
+            // 2. Compress the image to target size
+            statusText.textContent = `Compressing to under ${TARGET_MAX_SIZE_KB}KB...`;
+            
+            try {
+                const resultBlob = await compressImageToTarget(croppedCanvas, TARGET_MAX_SIZE_BYTES);
+                
+                // Success
+                compressedImageBlob = resultBlob;
+                
+                // Display final result
+                const resultUrl = URL.createObjectURL(resultBlob);
+                finalImage.src = resultUrl;
+                
+                const sizeKB = (resultBlob.size / 1024).toFixed(2);
+                fileSizeInfo.textContent = `Final Size: ${sizeKB} KB`;
+                
+                if (resultBlob.size > TARGET_MAX_SIZE_BYTES) {
+                     fileSizeInfo.classList.add('text-yellow-600', 'bg-yellow-50');
+                     fileSizeInfo.textContent += ` (Note: Could not compress below ${TARGET_MAX_SIZE_KB}KB without severe quality loss)`;
+                } else {
+                     fileSizeInfo.classList.add('text-green-600', 'bg-green-50');
+                }
+
+                // Update UI
+                processingStatus.classList.add('hidden');
+                finalPreviewContainer.classList.remove('hidden');
+                resultActions.classList.remove('hidden');
+
+            } catch (error) {
+                console.error("Compression error:", error);
+                statusText.textContent = "Error during compression.";
+                processingStatus.classList.replace('text-blue-800', 'text-red-800');
+                processingStatus.classList.replace('bg-blue-50', 'bg-red-50');
+                processingStatus.querySelector('.loader').style.display = 'none';
+                
+                // Add a button to go back
+                const backBtn = document.createElement('button');
+                backBtn.textContent = "Go Back";
+                backBtn.className = "mt-2 px-4 py-2 bg-gray-200 rounded";
+                backBtn.onclick = () => {
+                    sectionResult.classList.add('hidden');
+                    sectionCrop.classList.remove('hidden');
+                    processingStatus.classList.add('hidden');
+                    processingStatus.classList.replace('text-red-800', 'text-blue-800');
+                    processingStatus.classList.replace('bg-red-50', 'bg-blue-50');
+                    processingStatus.querySelector('.loader').style.display = 'inline-block';
+                };
+                processingStatus.appendChild(backBtn);
+            }
+        });
+
+        /**
+         * Helper function to convert canvas to Blob via Promise
+         */
+        function canvasToBlob(canvas, type, quality) {
+            return new Promise((resolve) => {
+                canvas.toBlob((blob) => {
+                    resolve(blob);
+                }, type, quality);
+            });
+        }
+
+        /**
+         * Iteratively compresses an image canvas by adjusting JPEG quality 
+         * and resizing if necessary to hit a target byte size.
+         */
+        async function compressImageToTarget(sourceCanvas, targetBytes) {
+            let quality = 0.9;
+            const minQuality = 0.1;
+            const qualityStep = 0.1;
+            
+            // First, try just lowering quality
+            let blob = await canvasToBlob(sourceCanvas, 'image/jpeg', quality);
+            
+            while (blob.size > targetBytes && quality > minQuality) {
+                quality -= qualityStep;
+                blob = await canvasToBlob(sourceCanvas, 'image/jpeg', quality);
+                console.log(`Trying quality ${quality.toFixed(1)}, size: ${(blob.size/1024).toFixed(1)}KB`);
+            }
+
+            // If quality is at minimum and it's STILL too big, we need to resize the canvas
+            if (blob.size > targetBytes) {
+                let scale = 0.8;
+                let currentCanvas = sourceCanvas;
+                
+                while (blob.size > targetBytes && scale > 0.3) {
+                    console.log(`Scaling down image by ${scale}...`);
+                    const newWidth = Math.floor(currentCanvas.width * scale);
+                    const newHeight = Math.floor(currentCanvas.height * scale);
+                    
+                    const tempCanvas = document.createElement('canvas');
+                    tempCanvas.width = newWidth;
+                    tempCanvas.height = newHeight;
+                    const ctx = tempCanvas.getContext('2d');
+                    
+                    // Draw scaled image
+                    ctx.drawImage(currentCanvas, 0, 0, newWidth, newHeight);
+                    
+                    // Try medium quality on the smaller image
+                    blob = await canvasToBlob(tempCanvas, 'image/jpeg', 0.6);
+                    console.log(`Scaled size: ${(blob.size/1024).toFixed(1)}KB`);
+                    
+                    // Prepare for next iteration if needed
+                    currentCanvas = tempCanvas;
+                    scale -= 0.1;
+                }
+            }
+            
+            return blob;
+        }
+
+        // --- PDF Generation Functions ---
+        downloadPdfBtn.addEventListener('click', async () => {
+            if (!compressedImageBlob) return;
+
+            const originalBtnText = downloadPdfBtn.innerHTML;
+            downloadPdfBtn.innerHTML = '<div class="loader" style="width: 20px; height: 20px; border-width: 2px;"></div> Generating PDF...';
+            downloadPdfBtn.disabled = true;
+
+            try {
+                // Convert Blob to Data URL for jsPDF
+                const reader = new FileReader();
+                reader.readAsDataURL(compressedImageBlob);
+                
+                reader.onloadend = () => {
+                    const base64data = reader.result;
+                    
+                    // Initialize jsPDF
+                    // Destructure jspdf from window object (since it's loaded via UMD script tag)
+                    const { jsPDF } = window.jspdf;
+                    
+                    // Create A4 PDF (portrait)
+                    const pdf = new jsPDF({
+                        orientation: 'portrait',
+                        unit: 'mm',
+                        format: 'a4'
+                    });
+
+                    // A4 dimensions in mm
+                    const pdfWidth = pdf.internal.pageSize.getWidth();
+                    const pdfHeight = pdf.internal.pageSize.getHeight();
+                    
+                    // Margins
+                    const margin = 10;
+                    const maxImgWidth = pdfWidth - (margin * 2);
+                    const maxImgHeight = pdfHeight - (margin * 2) - 20; // Leave space for title/footer
+                    
+                    // Get image dimensions to maintain aspect ratio
+                    const img = new Image();
+                    img.onload = () => {
+                        let imgWidth = img.width;
+                        let imgHeight = img.height;
+                        
+                        // Calculate aspect ratio
+                        const ratio = imgWidth / imgHeight;
+                        
+                        // Scale to fit width
+                        if (imgWidth > maxImgWidth) {
+                            imgWidth = maxImgWidth;
+                            imgHeight = imgWidth / ratio;
+                        }
+                        
+                        // Scale to fit height (if still too tall)
+                        if (imgHeight > maxImgHeight) {
+                            imgHeight = maxImgHeight;
+                            imgWidth = imgHeight * ratio;
+                        }
+                        
+                        // Center image horizontally
+                        const xOffset = (pdfWidth - imgWidth) / 2;
+                        // Position slightly below top margin
+                        const yOffset = margin + 10;
+
+                        // Add content to PDF
+                        pdf.setFontSize(14);
+                        pdf.text("Scanned Document", pdfWidth / 2, margin + 5, { align: "center" });
+                        
+                        // Add Image
+                        pdf.addImage(base64data, 'JPEG', xOffset, yOffset, imgWidth, imgHeight);
+                        
+                        // Add Footer
+                        pdf.setFontSize(10);
+                        pdf.setTextColor(150);
+                        const dateStr = new Date().toLocaleString();
+                        pdf.text(`Generated on: ${dateStr}`, pdfWidth / 2, pdfHeight - margin, { align: "center" });
+
+                        // Save PDF
+                        pdf.save(`document_${new Date().getTime()}.pdf`);
+                        
+                        // Reset button
+                        downloadPdfBtn.innerHTML = originalBtnText;
+                        downloadPdfBtn.disabled = false;
+                    };
+                    img.src = base64data;
+                };
+
+            } catch (error) {
+                console.error("PDF generation error:", error);
+                alert("An error occurred while generating the PDF.");
+                downloadPdfBtn.innerHTML = originalBtnText;
+                downloadPdfBtn.disabled = false;
+            }
+        });
+
+        startOverBtn.addEventListener('click', () => {
+            // Reset state
+            compressedImageBlob = null;
+            if (cropper) {
+                cropper.destroy();
+                cropper = null;
+            }
+            fileInput.value = '';
+            
+            // Reset UI
+            sectionResult.classList.add('hidden');
+            sectionCamera.classList.remove('hidden');
+            
+            // Clean up file size info classes
+            fileSizeInfo.className = 'text-xs font-mono p-1 rounded';
+            
+            // Restart camera
+            startCamera(currentFacingMode);
+        });
+
+        // --- Initialization ---
+        window.addEventListener('DOMContentLoaded', () => {
+            // Attempt to start camera immediately
+            startCamera();
+        });
+
+    </script>
 </body>
 </html>
