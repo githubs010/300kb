@@ -366,21 +366,12 @@
                 return;
             }
 
-            // Enhance text clarity using canvas filters (Contrast & Brightness boost)
-            const enhancedCanvas = document.createElement('canvas');
-            enhancedCanvas.width = croppedCanvas.width;
-            enhancedCanvas.height = croppedCanvas.height;
-            const eCtx = enhancedCanvas.getContext('2d');
-            // Apply document scanner style enhancement
-            eCtx.filter = 'contrast(1.4) brightness(1.15) saturate(1.1)';
-            eCtx.drawImage(croppedCanvas, 0, 0);
-
             // 2. Compress the image to target size
-            statusText.textContent = `Compressing to under ${TARGET_MAX_SIZE_KB}KB...`;
+            statusText.textContent = `Processing to under ${TARGET_MAX_SIZE_KB}KB...`;
             
             try {
-                // Pass the enhanced canvas to the compressor
-                const resultBlob = await compressImageToTarget(enhancedCanvas, TARGET_MAX_SIZE_BYTES);
+                // Pass the cropped canvas directly without artificial enhancements
+                const resultBlob = await compressImageToTarget(croppedCanvas, TARGET_MAX_SIZE_BYTES);
                 
                 // Success
                 compressedImageBlob = resultBlob;
@@ -514,8 +505,27 @@
                             let fileName = fileNameInput.value.trim();
                             if (!fileName) fileName = 'Scanned_Document';
 
-                            // Draw image to fill the entire A4 page (0 margins)
-                            pdf.addImage(base64data, 'JPEG', 0, 0, pdfWidth, pdfHeight);
+                            // Calculate aspect ratio to fit A4 without distortion
+                            const imgRatio = img.width / img.height;
+                            const pdfRatio = pdfWidth / pdfHeight;
+                            
+                            let finalWidth = pdfWidth;
+                            let finalHeight = pdfHeight;
+                            let x = 0;
+                            let y = 0;
+
+                            if (imgRatio > pdfRatio) {
+                                // Image is wider than A4 proportion
+                                finalHeight = pdfWidth / imgRatio;
+                                y = (pdfHeight - finalHeight) / 2; // Center vertically
+                            } else {
+                                // Image is taller than A4 proportion
+                                finalWidth = pdfHeight * imgRatio;
+                                x = (pdfWidth - finalWidth) / 2; // Center horizontally
+                            }
+
+                            // Draw image to fit perfectly inside the A4 sheet
+                            pdf.addImage(base64data, 'JPEG', x, y, finalWidth, finalHeight);
                             
                             resolve({ pdf, fileName });
                         };
