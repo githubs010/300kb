@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DocScanner Pro - Camera, Crop & Direct 300KB PDF Converter</title>
+    <title>DocScanner Pro - Responsive Adaptive Document Optimizer</title>
     
     <!-- Tailwind CSS for styling -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -111,275 +111,295 @@
         }
     </style>
 </head>
-<body class="h-screen w-screen overflow-hidden flex justify-center text-slate-100">
+<body class="h-screen w-screen overflow-hidden flex items-center justify-center text-slate-100 p-0 md:p-6">
 
-    <!-- App Outer Framework (Simulates clean, professional device UI) -->
-    <div class="w-full h-full max-w-md bg-slate-900 border-x border-slate-800 flex flex-col relative shadow-2xl overflow-hidden">
+    <!-- Adaptive Container: Fits mobile viewports fully, spreads into side-by-side split screen dashboard on Desktops -->
+    <div class="w-full h-full md:h-[90vh] md:max-h-[850px] md:max-w-6xl bg-slate-900 md:border md:border-slate-800 flex flex-col md:flex-row relative md:rounded-2xl shadow-2xl overflow-hidden">
         
-        <!-- Header Controls -->
-        <header class="bg-slate-950/80 backdrop-blur-md px-4 py-3 border-b border-slate-800 flex items-center justify-between z-30 flex-shrink-0">
-            <div class="flex items-center gap-2.5">
-                <div class="h-8 w-8 rounded-lg bg-blue-600 flex items-center justify-center shadow-lg shadow-blue-500/20">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4.5 w-4.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                    </svg>
+        <!-- ============================================== -->
+        <!-- LEFT PANEL: SOURCE & LENS INPUT CONTROLS       -->
+        <!-- ============================================== -->
+        <div id="left-panel" class="w-full md:w-1/2 h-full flex flex-col bg-slate-950/30 border-r border-slate-850">
+            
+            <!-- Header Controls -->
+            <header class="bg-slate-950/80 backdrop-blur-md px-4 py-3 border-b border-slate-850 flex items-center justify-between z-30 flex-shrink-0">
+                <div class="flex items-center gap-2.5">
+                    <div class="h-8 w-8 rounded-lg bg-blue-600 flex items-center justify-center shadow-lg shadow-blue-500/20">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4.5 w-4.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                    </div>
+                    <div>
+                        <h1 class="text-sm font-bold tracking-tight text-white">DocScanner <span class="text-blue-500">PRO</span></h1>
+                        <p class="text-[10px] text-slate-400 font-medium">Automatic 300KB Optimization</p>
+                    </div>
                 </div>
-                <div>
-                    <h1 class="text-sm font-bold tracking-tight text-white">DocScanner <span class="text-blue-500">PRO</span></h1>
-                    <p class="text-[10px] text-slate-400 font-medium">Automatic 300KB Optimization</p>
+                <div class="flex items-center gap-1.5">
+                    <span class="bg-blue-950 text-blue-400 border border-blue-800 px-2 py-0.5 rounded-full text-[9px] font-bold tracking-wider">SECURE LOCAL</span>
                 </div>
-            </div>
-            <div class="flex items-center gap-1.5">
-                <span class="bg-blue-950 text-blue-400 border border-blue-800 px-2 py-0.5 rounded-full text-[9px] font-bold tracking-wider">SECURE LOCAL</span>
-            </div>
-        </header>
+            </header>
 
-        <!-- Dynamic Modal Notification Overlay (Replacing Native Alerts) -->
-        <div id="toast-notification" class="absolute top-16 left-4 right-4 bg-slate-950 border border-slate-800 text-slate-200 px-3.5 py-3 rounded-xl shadow-2xl z-50 flex items-center gap-3 transform -translate-y-24 opacity-0 transition-all duration-300">
-            <div id="toast-icon" class="flex-shrink-0"></div>
-            <p id="toast-message" class="text-xs font-semibold flex-1 leading-relaxed"></p>
-            <button onclick="hideToast()" class="text-slate-500 hover:text-white transition">
-                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-            </button>
-        </div>
-
-        <!-- App Stepper Indicator -->
-        <div class="bg-slate-950 px-4 py-2 border-b border-slate-850 flex items-center justify-between text-[11px] font-semibold text-slate-400">
-            <div id="step-1-lbl" class="flex items-center gap-1.5 text-blue-500">
-                <span class="w-4 h-4 rounded-full bg-blue-500/10 border border-blue-500 flex items-center justify-center text-[10px] text-blue-400">1</span>
-                <span>Source</span>
+            <!-- Dynamic Modal Notification Overlay -->
+            <div id="toast-notification" class="absolute top-16 left-4 right-4 bg-slate-950 border border-slate-800 text-slate-200 px-3.5 py-3 rounded-xl shadow-2xl z-50 flex items-center gap-3 transform -translate-y-24 opacity-0 transition-all duration-300">
+                <div id="toast-icon" class="flex-shrink-0"></div>
+                <p id="toast-message" class="text-xs font-semibold flex-1 leading-relaxed"></p>
+                <button onclick="hideToast()" class="text-slate-500 hover:text-white transition">
+                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
             </div>
-            <div class="h-px bg-slate-800 flex-1 mx-3"></div>
-            <div id="step-2-lbl" class="flex items-center gap-1.5">
-                <span class="w-4 h-4 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-[10px]">2</span>
-                <span>Crop</span>
-            </div>
-            <div class="h-px bg-slate-800 flex-1 mx-3"></div>
-            <div id="step-3-lbl" class="flex items-center gap-1.5">
-                <span class="w-4 h-4 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-[10px]">3</span>
-                <span>Filter & Convert</span>
-            </div>
-        </div>
 
-        <!-- Scrollable content area -->
-        <main class="flex-1 overflow-y-auto p-4 flex flex-col justify-between">
-
-            <!-- SECTION A: Source Inputs (Unified Selector Switcher) -->
-            <div id="source-selector-panel" class="mb-4">
-                <div class="bg-slate-950 p-1.5 rounded-xl border border-slate-850 grid grid-cols-3 gap-1">
+            <!-- Input Tabs Selector -->
+            <div id="source-selector-panel" class="p-4 border-b border-slate-850 flex-shrink-0 bg-slate-950/20">
+                <div class="bg-slate-950 p-1 rounded-xl border border-slate-850 grid grid-cols-3 gap-1">
                     <button id="tab-btn-camera" class="py-2.5 rounded-lg text-xs font-bold flex flex-col items-center gap-1.5 transition duration-200">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4.5 w-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" /><circle cx="12" cy="13" r="3" /></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" /><circle cx="12" cy="13" r="3" /></svg>
                         <span>Camera App</span>
                     </button>
                     
                     <button id="tab-btn-upload" class="py-2.5 rounded-lg text-xs font-bold flex flex-col items-center gap-1.5 transition duration-200">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4.5 w-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>
                         <span>Load Image</span>
                     </button>
                     
                     <button id="tab-btn-simulate" class="py-2.5 rounded-lg text-xs font-bold flex flex-col items-center gap-1.5 transition duration-200">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4.5 w-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01" /></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01" /></svg>
                         <span>Flatbed Scan</span>
                     </button>
                 </div>
             </div>
 
-            <!-- SUB-SECTION 1: Interactive Live Camera Console -->
-            <div id="pane-camera" class="flex-1 flex flex-col justify-between gap-4">
-                <div class="relative w-full">
-                    <div id="camera-container" class="shadow-2xl border border-slate-800">
-                        <video id="video-element" autoplay playsinline class="bg-black"></video>
-                        <div class="scan-guide" id="overlay-guide"></div>
-                        
-                        <!-- Grid Lines overlay option -->
-                        <div class="absolute inset-0 grid grid-cols-3 grid-rows-3 pointer-events-none opacity-20">
-                            <div class="border-b border-r border-slate-100"></div>
-                            <div class="border-b border-r border-slate-100"></div>
-                            <div class="border-b border-slate-100"></div>
-                            <div class="border-b border-r border-slate-100"></div>
-                            <div class="border-b border-r border-slate-100"></div>
-                            <div class="border-b border-slate-100"></div>
-                        </div>
-                    </div>
-                </div>
+            <!-- Dynamic Source Content Area -->
+            <div class="flex-1 overflow-y-auto p-4 flex flex-col justify-center">
 
-                <div class="flex flex-col gap-3">
-                    <p class="text-xs font-semibold text-slate-400 text-center" id="camera-status-msg">
-                        Establishing secure connection...
-                    </p>
-                    
-                    <div class="grid grid-cols-12 gap-2">
-                        <button id="btn-camera-capture" class="col-span-9 py-3.5 bg-blue-600 hover:bg-blue-500 active:scale-[0.98] text-white rounded-xl font-bold text-sm shadow-xl shadow-blue-500/10 flex justify-center items-center gap-2 transition disabled:opacity-40" disabled>
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><circle cx="12" cy="12" r="9" stroke-width="2"/><circle cx="12" cy="12" r="3" fill="currentColor"/></svg>
-                            Capture Frame & Crop
-                        </button>
-                        
-                        <button id="btn-camera-switch" class="col-span-3 bg-slate-950 border border-slate-850 hover:bg-slate-900 text-slate-300 rounded-xl flex items-center justify-center transition" title="Switch Camera">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.21 6H16" /></svg>
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- SUB-SECTION 2: Upload Files/Existing Images -->
-            <div id="pane-upload" class="hidden flex-1 flex flex-col justify-center py-6">
-                <div class="border-2 border-dashed border-slate-800 hover:border-blue-500/50 bg-slate-950/60 transition-all rounded-2xl p-8 flex flex-col items-center justify-center text-center cursor-pointer group" onclick="document.getElementById('file-input').click()">
-                    <div class="w-14 h-14 bg-slate-900 group-hover:bg-blue-950/40 rounded-full flex items-center justify-center mb-4 transition border border-slate-850 group-hover:border-blue-900/40">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-slate-400 group-hover:text-blue-400 transition" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-                        </svg>
-                    </div>
-                    <span class="text-xs font-bold text-slate-200 mb-1">Upload Existing Document Image</span>
-                    <span class="text-[10px] text-slate-500 max-w-[200px] leading-relaxed mb-3">Load gallery snapshots (JPEG, PNG) directly to initiate crop & compression</span>
-                    <span class="bg-slate-900 border border-slate-800 group-hover:bg-blue-600 group-hover:text-white px-3 py-1.5 rounded-lg text-[10px] font-bold tracking-wide transition text-slate-400">Select File</span>
-                    <input type="file" id="file-input" accept="image/*" class="hidden" />
-                </div>
-            </div>
-
-            <!-- SUB-SECTION 3: Flatbed Virtual Scanner Simulation -->
-            <div id="pane-simulate" class="hidden flex-1 flex flex-col justify-between gap-4">
-                <!-- Mechanical Scanner Bed Visual -->
-                <div class="relative w-full aspect-[4/3] bg-slate-950 rounded-2xl border border-slate-850 overflow-hidden shadow-inner flex items-center justify-center p-3">
-                    <div id="flatbed-viewport" class="absolute inset-0 bg-slate-950 border-4 border-slate-900 rounded-xl flex items-center justify-center overflow-hidden">
-                        <!-- Neon Grid Backplate -->
-                        <div class="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:16px_16px] pointer-events-none"></div>
-                        <div class="absolute inset-0 bg-gradient-to-tr from-transparent via-white/[0.03] to-transparent pointer-events-none"></div>
-                        
-                        <!-- Simulated Placed Paper Silhouette -->
-                        <div id="procedural-paper-preview" class="w-[48%] aspect-[1/1.4] bg-white rounded shadow-2xl border border-slate-200 relative transition-all duration-300 flex flex-col items-center justify-center p-4">
-                            <div class="w-full h-full flex flex-col gap-2 overflow-hidden pointer-events-none opacity-50">
-                                <div class="h-2 w-1/2 bg-slate-400 rounded"></div>
-                                <div class="h-1.5 w-full bg-slate-200 rounded"></div>
-                                <div class="h-1.5 w-4/5 bg-slate-200 rounded"></div>
-                                <div class="mt-auto h-2.5 w-1/3 bg-slate-400 rounded self-end"></div>
+                <!-- SUB-SECTION 1: Interactive Live Camera Console -->
+                <div id="pane-camera" class="flex-1 flex flex-col justify-between gap-4">
+                    <div class="relative w-full max-w-[420px] mx-auto">
+                        <div id="camera-container" class="shadow-2xl border border-slate-800">
+                            <video id="video-element" autoplay playsinline class="bg-black"></video>
+                            <div class="scan-guide" id="overlay-guide"></div>
+                            
+                            <div class="absolute inset-0 grid grid-cols-3 grid-rows-3 pointer-events-none opacity-20">
+                                <div class="border-b border-r border-slate-100"></div>
+                                <div class="border-b border-r border-slate-100"></div>
+                                <div class="border-b border-slate-100"></div>
+                                <div class="border-b border-r border-slate-100"></div>
+                                <div class="border-b border-r border-slate-100"></div>
+                                <div class="border-b border-slate-100"></div>
                             </div>
                         </div>
+                    </div>
 
-                        <!-- Scan laser bar -->
-                        <div id="simulated-laser-bar" class="absolute left-1 right-1 h-1.5 bg-gradient-to-r from-blue-500 via-cyan-400 to-blue-500 shadow-[0_0_12px_#3b82f6] hidden laser-beam z-20"></div>
+                    <div class="flex flex-col gap-3 max-w-[420px] w-full mx-auto">
+                        <p class="text-xs font-semibold text-slate-400 text-center" id="camera-status-msg">
+                            Establishing secure connection...
+                        </p>
+                        
+                        <div class="grid grid-cols-12 gap-2">
+                            <button id="btn-camera-capture" class="col-span-9 py-3.5 bg-blue-600 hover:bg-blue-500 active:scale-[0.98] text-white rounded-xl font-bold text-sm shadow-xl shadow-blue-500/10 flex justify-center items-center gap-2 transition disabled:opacity-40" disabled>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><circle cx="12" cy="12" r="9" stroke-width="2"/><circle cx="12" cy="12" r="3" fill="currentColor"/></svg>
+                                Capture & Crop
+                            </button>
+                            
+                            <button id="btn-camera-switch" class="col-span-3 bg-slate-950 border border-slate-850 hover:bg-slate-900 text-slate-300 rounded-xl flex items-center justify-center transition" title="Switch Camera">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.21 6H16" /></svg>
+                            </button>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Simulation Settings -->
-                <div class="bg-slate-950 p-3 rounded-xl border border-slate-850">
-                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 text-center">Procedural Templates</p>
-                    <div class="grid grid-cols-3 gap-1.5 mb-3.5">
-                        <button id="tpl-item-invoice" class="py-2 text-[11px] font-bold rounded-lg border text-center transition">💼 Contract</button>
-                        <button id="tpl-item-receipt" class="py-2 text-[11px] font-bold rounded-lg border text-center transition">🧾 Receipt</button>
-                        <button id="tpl-item-idcard" class="py-2 text-[11px] font-bold rounded-lg border text-center transition">🪪 ID Card</button>
+                <!-- SUB-SECTION 2: Upload Files/Existing Images -->
+                <div id="pane-upload" class="hidden flex-1 flex flex-col justify-center py-6 max-w-[420px] w-full mx-auto">
+                    <div class="border-2 border-dashed border-slate-800 hover:border-blue-500/50 bg-slate-950/60 transition-all rounded-2xl p-8 flex flex-col items-center justify-center text-center cursor-pointer group" onclick="document.getElementById('file-input').click()">
+                        <div class="w-14 h-14 bg-slate-900 group-hover:bg-blue-950/40 rounded-full flex items-center justify-center mb-4 transition border border-slate-850 group-hover:border-blue-900/40">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-slate-400 group-hover:text-blue-400 transition" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                            </svg>
+                        </div>
+                        <span class="text-xs font-bold text-slate-200 mb-1">Upload Existing Document Image</span>
+                        <span class="text-[10px] text-slate-500 max-w-[200px] leading-relaxed mb-3">Load gallery snapshots (JPEG, PNG) directly to initiate crop & compression</span>
+                        <span class="bg-slate-900 border border-slate-800 group-hover:bg-blue-600 group-hover:text-white px-3 py-1.5 rounded-lg text-[10px] font-bold tracking-wide transition text-slate-400">Select File</span>
+                        <input type="file" id="file-input" accept="image/*" class="hidden" />
+                    </div>
+                </div>
+
+                <!-- SUB-SECTION 3: Flatbed Virtual Scanner Simulation -->
+                <div id="pane-simulate" class="hidden flex-1 flex flex-col justify-between gap-4 max-w-[420px] w-full mx-auto">
+                    <!-- Mechanical Scanner Bed Visual -->
+                    <div class="relative w-full aspect-[4/3] bg-slate-950 rounded-2xl border border-slate-850 overflow-hidden shadow-inner flex items-center justify-center p-3">
+                        <div id="flatbed-viewport" class="absolute inset-0 bg-slate-950 border-4 border-slate-900 rounded-xl flex items-center justify-center overflow-hidden">
+                            <div class="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:16px_16px] pointer-events-none"></div>
+                            
+                            <!-- Simulated Placed Paper Silhouette -->
+                            <div id="procedural-paper-preview" class="w-[48%] aspect-[1/1.4] bg-white rounded shadow-2xl border border-slate-200 relative transition-all duration-300 flex flex-col items-center justify-center p-4">
+                                <div class="w-full h-full flex flex-col gap-2 overflow-hidden pointer-events-none opacity-50">
+                                    <div class="h-2 w-1/2 bg-slate-400 rounded"></div>
+                                    <div class="h-1.5 w-full bg-slate-200 rounded"></div>
+                                    <div class="h-1.5 w-4/5 bg-slate-200 rounded"></div>
+                                    <div class="mt-auto h-2.5 w-1/3 bg-slate-400 rounded self-end"></div>
+                                </div>
+                            </div>
+
+                            <div id="simulated-laser-bar" class="absolute left-1 right-1 h-1.5 bg-gradient-to-r from-blue-500 via-cyan-400 to-blue-500 shadow-[0_0_12px_#3b82f6] hidden laser-beam z-20"></div>
+                        </div>
                     </div>
 
-                    <button id="btn-simulate-trigger" class="w-full py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-bold text-xs tracking-wider uppercase transition flex justify-center items-center gap-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
-                        Initiate Mechanical Scan
-                    </button>
+                    <!-- Simulation Settings -->
+                    <div class="bg-slate-950 p-3 rounded-xl border border-slate-850">
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 text-center">Procedural Templates</p>
+                        <div class="grid grid-cols-3 gap-1.5 mb-3.5">
+                            <button id="tpl-item-invoice" class="py-2 text-[11px] font-bold rounded-lg border text-center transition">💼 Contract</button>
+                            <button id="tpl-item-receipt" class="py-2 text-[11px] font-bold rounded-lg border text-center transition">🧾 Receipt</button>
+                            <button id="tpl-item-idcard" class="py-2 text-[11px] font-bold rounded-lg border text-center transition">🪪 ID Card</button>
+                        </div>
+
+                        <button id="btn-simulate-trigger" class="w-full py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-bold text-xs tracking-wider uppercase transition flex justify-center items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                            Initiate Mechanical Scan
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================== -->
+        <!-- RIGHT PANEL: ADAPTIVE WORKSPACE & PROCESSING     -->
+        <!-- ============================================== -->
+        <div id="right-panel" class="w-full md:w-1/2 h-full flex flex-col bg-slate-900">
+            
+            <!-- App Stepper Indicator -->
+            <div class="bg-slate-950 px-4 py-3 border-b border-slate-850 flex items-center justify-between text-[11px] font-semibold text-slate-400 flex-shrink-0">
+                <div id="step-1-lbl" class="flex items-center gap-1.5 text-blue-500">
+                    <span class="w-4 h-4 rounded-full bg-blue-500/10 border border-blue-500 flex items-center justify-center text-[10px] text-blue-400">1</span>
+                    <span>Source</span>
+                </div>
+                <div class="h-px bg-slate-800 flex-1 mx-3"></div>
+                <div id="step-2-lbl" class="flex items-center gap-1.5">
+                    <span class="w-4 h-4 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-[10px]">2</span>
+                    <span>Crop</span>
+                </div>
+                <div class="h-px bg-slate-800 flex-1 mx-3"></div>
+                <div id="step-3-lbl" class="flex items-center gap-1.5">
+                    <span class="w-4 h-4 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-[10px]">3</span>
+                    <span>Filter & Save</span>
                 </div>
             </div>
 
-            <!-- SECTION B: Comprehensive Cropper Workspace -->
-            <div id="pane-crop" class="hidden flex-1 flex flex-col justify-between gap-4">
-                <div class="bg-slate-950/60 p-2 rounded-2xl border border-slate-850 flex-1 flex items-center justify-center overflow-hidden min-h-[250px] relative">
-                    <div class="w-full max-h-[350px] flex items-center justify-center overflow-hidden">
-                        <img id="image-workspace" src="" alt="Cropping Workspace" class="max-w-full max-h-full block">
-                    </div>
-                </div>
-                
-                <div class="flex items-center gap-2">
-                    <button id="btn-crop-cancel" class="w-1/3 py-3 bg-slate-950 border border-slate-850 hover:bg-slate-900 text-slate-300 rounded-xl font-bold text-xs transition">
-                        Discard
-                    </button>
-                    
-                    <button id="btn-crop-confirm" class="w-2/3 py-3 bg-emerald-600 hover:bg-emerald-500 active:scale-[0.98] text-white rounded-xl font-bold text-xs tracking-wider uppercase shadow-lg shadow-emerald-500/10 flex justify-center items-center gap-2 transition">
-                        <span>Save Crop & Adjust</span>
-                    </button>
-                </div>
-            </div>
+            <!-- Right Panel Content Workspace -->
+            <div class="flex-1 overflow-y-auto p-4 flex flex-col justify-center">
 
-            <!-- SECTION C: Processing, Enhancements & Direct 300KB PDF Conversion -->
-            <div id="pane-result" class="hidden flex-1 flex flex-col justify-between gap-4">
-                
-                <!-- High-Precision Loader State -->
-                <div id="result-loading-card" class="bg-slate-950 border border-slate-850 p-6 rounded-2xl flex flex-col items-center justify-center text-center gap-3">
-                    <div class="loader-ring"></div>
+                <!-- STATE 1: Desktop Idle Workspace Empty State -->
+                <div id="desktop-idle-pane" class="hidden md:flex flex-col items-center justify-center text-center p-8 my-auto gap-4">
+                    <div class="w-16 h-16 rounded-2xl bg-blue-950/30 border border-blue-900/30 flex items-center justify-center text-blue-500 animate-pulse">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
+                    </div>
                     <div>
-                        <p id="result-status-title" class="text-xs font-bold text-slate-200">Processing scan configurations...</p>
-                        <p id="result-status-subtitle" class="text-[10px] text-slate-500 mt-1">Applying real-time threshold algorithms</p>
+                        <h3 class="text-sm font-bold text-slate-200">Awaiting Document Source</h3>
+                        <p class="text-xs text-slate-500 max-w-[250px] mt-1 leading-relaxed">Capture from lens, load a gallery image, or trigger a flatbed scan on the left to begin editing.</p>
                     </div>
                 </div>
 
-                <!-- Live Document Viewer Frame -->
-                <div id="result-preview-card" class="hidden flex flex-col gap-3">
-                    
-                    <!-- Integrated Document Filter Tabs -->
-                    <div class="bg-slate-950 p-1 rounded-xl border border-slate-850 grid grid-cols-4 gap-1">
-                        <button id="filter-btn-orig" class="py-1.5 text-[10px] font-bold rounded-lg transition">Original</button>
-                        <button id="filter-btn-scan" class="py-1.5 text-[10px] font-bold rounded-lg transition" title="Bleaches white background and enhances dark texts">Magic Scan</button>
-                        <button id="filter-btn-gray" class="py-1.5 text-[10px] font-bold rounded-lg transition">Grayscale</button>
-                        <button id="filter-btn-blue" class="py-1.5 text-[10px] font-bold rounded-lg transition">Blueprint</button>
-                    </div>
-
-                    <!-- Compact Image Frame with Real-Time Sizing Gauge -->
-                    <div class="relative bg-slate-950/40 border border-slate-850 rounded-2xl p-2.5 flex flex-col items-center">
-                        <img id="result-render-image" src="" alt="Enhanced Document Preview" class="max-w-full h-auto max-h-56 rounded-lg shadow-2xl border border-slate-800 object-contain bg-white">
-                        
-                        <!-- Compression Size Limit Analyzer HUD -->
-                        <div class="w-full mt-3 bg-slate-950 border border-slate-850 rounded-xl p-2.5 flex items-center justify-between gap-3">
-                            <div class="flex-1">
-                                <div class="flex justify-between text-[10px] font-bold tracking-tight mb-1">
-                                    <span class="text-slate-400">PDF Compression Scale</span>
-                                    <span id="target-kb-display" class="font-mono-code text-emerald-400">0.00 KB / 300 KB</span>
-                                </div>
-                                <div class="w-full bg-slate-900 rounded-full h-1.5 overflow-hidden border border-slate-850">
-                                    <div id="compression-gauge-bar" class="bg-emerald-500 h-1.5 rounded-full transition-all duration-300" style="width: 0%"></div>
-                                </div>
-                            </div>
-                            <div class="flex-shrink-0">
-                                <span class="bg-emerald-950 border border-emerald-800/60 text-emerald-400 px-2 py-1 rounded-md text-[9px] font-bold font-mono-code uppercase">Auto fit</span>
-                            </div>
+                <!-- STATE 2: Crop Workspace -->
+                <div id="pane-crop" class="hidden flex-1 flex flex-col justify-between gap-4 max-w-[420px] w-full mx-auto">
+                    <div class="bg-slate-950/60 p-2 rounded-2xl border border-slate-850 flex-1 flex items-center justify-center overflow-hidden min-h-[250px] relative">
+                        <div class="w-full max-h-[320px] flex items-center justify-center overflow-hidden">
+                            <img id="image-workspace" src="" alt="Cropping Workspace" class="max-w-full max-h-full block">
                         </div>
+                    </div>
+                    
+                    <div class="flex items-center gap-2">
+                        <button id="btn-crop-cancel" class="w-1/3 py-3 bg-slate-950 border border-slate-850 hover:bg-slate-900 text-slate-300 rounded-xl font-bold text-xs transition">
+                            Discard
+                        </button>
+                        
+                        <button id="btn-crop-confirm" class="w-2/3 py-3 bg-emerald-600 hover:bg-emerald-500 active:scale-[0.98] text-white rounded-xl font-bold text-xs tracking-wider uppercase shadow-lg shadow-emerald-500/10 flex justify-center items-center gap-2 transition">
+                            <span>Save Crop & Filter</span>
+                        </button>
                     </div>
                 </div>
 
-                <!-- Export Settings & Action Buttons -->
-                <div id="result-action-panel" class="hidden flex flex-col gap-3">
+                <!-- STATE 3: Final Output & Export Settings Panel -->
+                <div id="pane-result" class="hidden flex-1 flex flex-col justify-between gap-4 max-w-[420px] w-full mx-auto">
                     
-                    <div class="w-full">
-                        <label for="input-export-filename" class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">Document File Name</label>
-                        <div class="relative">
-                            <input type="text" id="input-export-filename" value="Scanned_Document" class="block w-full rounded-xl bg-slate-950 border border-slate-850 py-3.5 pl-3.5 pr-12 text-xs font-semibold text-slate-100 placeholder-slate-600 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/30 transition">
-                            <span class="absolute right-3.5 top-1/2 -translate-y-1/2 text-[10px] font-bold font-mono-code text-slate-500">.pdf</span>
+                    <!-- Loading Status Card -->
+                    <div id="result-loading-card" class="bg-slate-950 border border-slate-850 p-6 rounded-2xl flex flex-col items-center justify-center text-center gap-3">
+                        <div class="loader-ring"></div>
+                        <div>
+                            <p id="result-status-title" class="text-xs font-bold text-slate-200">Applying filters...</p>
+                            <p id="result-status-subtitle" class="text-[10px] text-slate-500 mt-1">Calibrating output matrix</p>
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-2 gap-2">
-                        <!-- Direct Save PDF Action -->
-                        <button id="btn-save-pdf" class="py-3.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-bold text-xs tracking-wider uppercase shadow-xl shadow-blue-500/15 flex justify-center items-center gap-2 transition">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
-                            Save PDF
-                        </button>
+                    <!-- Interactive Scan Results Interface -->
+                    <div id="result-preview-card" class="hidden flex flex-col gap-3">
                         
-                        <!-- Alternative Instant JPG Export -->
-                        <button id="btn-save-image" class="py-3.5 bg-slate-950 border border-slate-850 hover:bg-slate-900 text-slate-300 rounded-xl font-bold text-xs tracking-wider uppercase flex justify-center items-center gap-2 transition">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a1 1 0 011.414 0L16 18M8 12l2.586-2.586a1 1 0 011.414 0L15 13m0 5h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                            Save Image
-                        </button>
+                        <!-- Color Enhancing Filter Options -->
+                        <div class="bg-slate-950 p-1 rounded-xl border border-slate-850 grid grid-cols-4 gap-1">
+                            <button id="filter-btn-orig" class="py-1.5 text-[10px] font-bold rounded-lg transition">Original</button>
+                            <button id="filter-btn-scan" class="py-1.5 text-[10px] font-bold rounded-lg transition" title="Bleaches sheet background & boosts print dark levels">Magic Scan</button>
+                            <button id="filter-btn-gray" class="py-1.5 text-[10px] font-bold rounded-lg transition">Grayscale</button>
+                            <button id="filter-btn-blue" class="py-1.5 text-[10px] font-bold rounded-lg transition">Blueprint</button>
+                        </div>
+
+                        <!-- Render Frame Preview and Size HUD -->
+                        <div class="relative bg-slate-950/40 border border-slate-850 rounded-2xl p-2.5 flex flex-col items-center">
+                            <img id="result-render-image" src="" alt="Enhanced Document Preview" class="max-w-full h-auto max-h-48 rounded-lg shadow-2xl border border-slate-800 object-contain bg-white">
+                            
+                            <!-- Precision Target Compression Meter -->
+                            <div class="w-full mt-3 bg-slate-950 border border-slate-850 rounded-xl p-2.5 flex items-center justify-between gap-3">
+                                <div class="flex-1">
+                                    <div class="flex justify-between text-[10px] font-bold tracking-tight mb-1">
+                                        <span class="text-slate-400">Adaptive PDF Weight</span>
+                                        <span id="target-kb-display" class="font-mono-code text-emerald-400">0.00 KB / 300 KB</span>
+                                    </div>
+                                    <div class="w-full bg-slate-900 rounded-full h-1.5 overflow-hidden border border-slate-850">
+                                        <div id="compression-gauge-bar" class="bg-emerald-500 h-1.5 rounded-full transition-all duration-300" style="width: 0%"></div>
+                                    </div>
+                                </div>
+                                <div class="flex-shrink-0">
+                                    <span class="bg-emerald-950 border border-emerald-800/60 text-emerald-400 px-2 py-1 rounded-md text-[9px] font-bold font-mono-code uppercase">Auto-Fit</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
-                    <!-- Direct Web Share Integration -->
-                    <button id="btn-share-trigger" class="w-full py-3.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl font-bold text-xs tracking-wider uppercase flex justify-center items-center gap-2 transition">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M8.684 10.742l4.307-2.153m0 2.822l-4.307-2.153m11.014-2.822a3 3 0 11-6 0 3 3 0 016 0zm-6 10a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
-                        Share File
-                    </button>
+                    <!-- Action Export Triggers -->
+                    <div id="result-action-panel" class="hidden flex flex-col gap-3">
+                        
+                        <div class="w-full">
+                            <label for="input-export-filename" class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">Save Document As</label>
+                            <div class="relative">
+                                <input type="text" id="input-export-filename" value="Scanned_Document" class="block w-full rounded-xl bg-slate-950 border border-slate-850 py-3.5 pl-3.5 pr-12 text-xs font-semibold text-slate-100 placeholder-slate-600 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/30 transition">
+                                <span class="absolute right-3.5 top-1/2 -translate-y-1/2 text-[10px] font-bold font-mono-code text-slate-500">.pdf</span>
+                            </div>
+                        </div>
 
-                    <button id="btn-result-reset" class="w-full py-3 mt-1 bg-slate-950/40 hover:bg-slate-950 text-slate-400 hover:text-white rounded-xl font-bold text-xs transition border border-slate-850">
-                        Scan Another Document
-                    </button>
+                        <div class="grid grid-cols-2 gap-2">
+                            <button id="btn-save-pdf" class="py-3.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-bold text-xs tracking-wider uppercase shadow-xl shadow-blue-500/15 flex justify-center items-center gap-2 transition">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                                Save PDF
+                            </button>
+                            
+                            <button id="btn-save-image" class="py-3.5 bg-slate-950 border border-slate-850 hover:bg-slate-900 text-slate-300 rounded-xl font-bold text-xs tracking-wider uppercase flex justify-center items-center gap-2 transition">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a1 1 0 011.414 0L16 18M8 12l2.586-2.586a1 1 0 011.414 0L15 13m0 5h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                Save Image
+                            </button>
+                        </div>
+
+                        <button id="btn-share-trigger" class="w-full py-3.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl font-bold text-xs tracking-wider uppercase flex justify-center items-center gap-2 transition">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M8.684 10.742l4.307-2.153m0 2.822l-4.307-2.153m11.014-2.822a3 3 0 11-6 0 3 3 0 016 0zm-6 10a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                            Share File
+                        </button>
+
+                        <button id="btn-result-reset" class="w-full py-3 mt-1 bg-slate-950/40 hover:bg-slate-950 text-slate-400 hover:text-white rounded-xl font-bold text-xs transition border border-slate-850">
+                            Scan New Page
+                        </button>
+                    </div>
                 </div>
             </div>
-        </main>
+        </div>
     </div>
 
-    <!-- Hidden native canvas to support frame grabbing and programmatic document assembly -->
+    <!-- Hidden canvas configuration to process offscreen image buffers -->
     <canvas id="canvas-element"></canvas>
 
     <script>
@@ -388,13 +408,17 @@
         
         let activeStream = null;
         let activeCropper = null;
-        let selectedFacingMode = 'environment'; // Target high resolution rear camera
-        let processedBlob = null; // Stored final binary payload
-        let uncroppedImageSource = null; // Cached current canvas state
-        let currentActiveFilter = 'orig'; // Track aesthetic layer applied
-        let simulatorDocTemplate = 'invoice'; // procedural document preset
+        let selectedFacingMode = 'environment';
+        let processedBlob = null;
+        let uncroppedImageSource = null;
+        let currentActiveFilter = 'orig';
+        let simulatorDocTemplate = 'invoice';
+        
+        // Navigation States
+        let currentStep = 1; // 1: Source, 2: Crop, 3: Filter & Result
+        let currentTab = 'camera'; // 'camera', 'upload', 'simulate'
 
-        // DOM elements cache definitions
+        // DOM elements
         const tabBtnCamera = document.getElementById('tab-btn-camera');
         const tabBtnUpload = document.getElementById('tab-btn-upload');
         const tabBtnSimulate = document.getElementById('tab-btn-simulate');
@@ -447,7 +471,6 @@
         const simLaserBar = document.getElementById('simulated-laser-bar');
         const paperPreview = document.getElementById('procedural-paper-preview');
 
-        // Custom interactive visual notification triggers (Replacing blocking alerts)
         function triggerToast(message, type = 'info') {
             const toast = document.getElementById('toast-notification');
             const icon = document.getElementById('toast-icon');
@@ -477,7 +500,52 @@
             toast.classList.remove('translate-y-0', 'opacity-100');
         }
 
-        // Stepper Navigation Visual State Managers
+        function applyResponsiveLayout() {
+            const isDesktop = window.innerWidth >= 768;
+            
+            if (isDesktop) {
+                // Desktop: Dual Dashboard Viewports
+                document.getElementById('left-panel').classList.remove('hidden');
+                document.getElementById('right-panel').classList.remove('hidden');
+                document.getElementById('source-selector-panel').classList.remove('hidden');
+                
+                // Toggle active Right Panel sub-states
+                if (currentStep === 1) {
+                    document.getElementById('desktop-idle-pane').classList.remove('hidden');
+                    paneCrop.classList.add('hidden');
+                    paneResult.classList.add('hidden');
+                } else if (currentStep === 2) {
+                    document.getElementById('desktop-idle-pane').classList.add('hidden');
+                    paneCrop.classList.remove('hidden');
+                    paneResult.classList.add('hidden');
+                } else if (currentStep === 3) {
+                    document.getElementById('desktop-idle-pane').classList.add('hidden');
+                    paneCrop.classList.add('hidden');
+                    paneResult.classList.remove('hidden');
+                }
+            } else {
+                // Mobile: Sequential Panel Stepper
+                document.getElementById('desktop-idle-pane').classList.add('hidden');
+                
+                if (currentStep === 1) {
+                    document.getElementById('left-panel').classList.remove('hidden');
+                    document.getElementById('right-panel').classList.add('hidden');
+                    document.getElementById('source-selector-panel').classList.remove('hidden');
+                } else if (currentStep === 2) {
+                    document.getElementById('left-panel').classList.add('hidden');
+                    document.getElementById('right-panel').classList.remove('hidden');
+                    paneCrop.classList.remove('hidden');
+                    paneResult.classList.add('hidden');
+                } else if (currentStep === 3) {
+                    document.getElementById('left-panel').classList.add('hidden');
+                    document.getElementById('right-panel').classList.remove('hidden');
+                    paneCrop.classList.add('hidden');
+                    paneResult.classList.remove('hidden');
+                }
+            }
+            updateStepperStatus(currentStep);
+        }
+
         function updateStepperStatus(step) {
             const steps = [
                 { id: 1, lbl: labelStep1, color: 'text-blue-500' },
@@ -487,7 +555,6 @@
 
             steps.forEach(s => {
                 const bubble = s.lbl.querySelector('span:first-child');
-                const label = s.lbl.querySelector('span:last-child');
                 
                 if (s.id === step) {
                     s.lbl.className = `flex items-center gap-1.5 font-bold ${s.color}`;
@@ -502,13 +569,11 @@
             });
         }
 
-        // Main Tab Selection Controllers
         function changeInputMode(source) {
+            currentTab = source;
             paneCamera.classList.add('hidden');
             paneUpload.classList.add('hidden');
             paneSimulate.classList.add('hidden');
-            paneCrop.classList.add('hidden');
-            paneResult.classList.add('hidden');
 
             const tabButtons = [tabBtnCamera, tabBtnUpload, tabBtnSimulate];
             tabButtons.forEach(btn => {
@@ -519,37 +584,34 @@
                 paneCamera.classList.remove('hidden');
                 tabBtnCamera.className = "py-2.5 rounded-lg text-xs font-bold flex flex-col items-center gap-1.5 transition duration-200 bg-blue-950/40 border border-blue-900/60 text-blue-400";
                 startVideoCamera(selectedFacingMode);
-                updateStepperStatus(1);
             } else if (source === 'upload') {
                 stopVideoCamera();
                 paneUpload.classList.remove('hidden');
                 tabBtnUpload.className = "py-2.5 rounded-lg text-xs font-bold flex flex-col items-center gap-1.5 transition duration-200 bg-blue-950/40 border border-blue-900/60 text-blue-400";
-                updateStepperStatus(1);
             } else if (source === 'simulate') {
                 stopVideoCamera();
                 paneSimulate.classList.remove('hidden');
                 tabBtnSimulate.className = "py-2.5 rounded-lg text-xs font-bold flex flex-col items-center gap-1.5 transition duration-200 bg-blue-950/40 border border-blue-900/60 text-blue-400";
-                updateStepperStatus(1);
             }
+            applyResponsiveLayout();
         }
 
         tabBtnCamera.addEventListener('click', () => changeInputMode('camera'));
         tabBtnUpload.addEventListener('click', () => changeInputMode('upload'));
         tabBtnSimulate.addEventListener('click', () => changeInputMode('simulate'));
 
-        // Core Stream Camera Handlers
         async function startVideoCamera(facingMode = 'environment') {
             stopVideoCamera(); 
 
             try {
-                cameraStatusMsg.textContent = "Requesting device permission...";
+                cameraStatusMsg.textContent = "Requesting secure lens permissions...";
                 cameraStatusMsg.className = "text-xs font-semibold text-slate-500 text-center";
                 btnCameraCapture.disabled = true;
 
                 const constraints = {
                     video: {
                         facingMode: facingMode,
-                        width: { ideal: 4096 }, // Try high definition targets for legible scanned print text
+                        width: { ideal: 4096 }, 
                         height: { ideal: 3072 }
                     }
                 };
@@ -560,7 +622,7 @@
                 videoEl.onloadedmetadata = () => {
                     videoEl.play();
                     btnCameraCapture.disabled = false;
-                    cameraStatusMsg.textContent = "Camera live and calibrating...";
+                    cameraStatusMsg.textContent = "Lens ready & calibrated.";
                     cameraStatusMsg.className = "text-xs font-bold text-emerald-400 text-center";
                 };
 
@@ -574,11 +636,10 @@
 
             } catch (err) {
                 console.error("Camera acquisition failure:", err);
-                cameraStatusMsg.textContent = "Access failure. Try 'Load Image' or 'Flatbed Scan' options.";
+                cameraStatusMsg.textContent = "Secure camera blocked. Load local image instead.";
                 cameraStatusMsg.className = "text-xs font-bold text-red-400 text-center";
                 btnCameraCapture.disabled = true;
-                
-                triggerToast("Secure Camera access block. Fall back to image upload.", "error");
+                triggerToast("Secure camera blocked. Fall back to local file upload.", "error");
             }
         }
 
@@ -593,7 +654,7 @@
 
         btnCameraSwitch.addEventListener('click', () => {
             selectedFacingMode = selectedFacingMode === 'environment' ? 'user' : 'environment';
-            cameraStatusMsg.textContent = "Configuring active lens...";
+            cameraStatusMsg.textContent = "Re-orienting active lens...";
             startVideoCamera(selectedFacingMode);
         });
 
@@ -618,7 +679,6 @@
             }
         });
 
-        // Flatbed Scanner Procedural Simulator Templates
         function changeSimulatorTemplate(type) {
             simulatorDocTemplate = type;
             const buttons = [tplItemInvoice, tplItemReceipt, tplItemIdcard];
@@ -643,40 +703,34 @@
         tplItemReceipt.addEventListener('click', () => changeSimulatorTemplate('receipt'));
         tplItemIdcard.addEventListener('click', () => changeSimulatorTemplate('idcard'));
 
-        // High Quality Document Procedural Rendering Generator
         function drawSynthesizedDoc(type) {
             const renderCanvas = document.createElement('canvas');
             
             if (type === 'invoice') {
                 renderCanvas.width = 1240;
-                renderCanvas.height = 1754; // Standard A4 High Definition Scale
+                renderCanvas.height = 1754; 
             } else if (type === 'receipt') {
                 renderCanvas.width = 800;
                 renderCanvas.height = 1800;
             } else if (type === 'idcard') {
                 renderCanvas.width = 1012;
-                renderCanvas.height = 638; // Standard ID proportion
+                renderCanvas.height = 638; 
             }
 
             const ctx = renderCanvas.getContext('2d');
-            
-            // Base Background Paper Styling
             ctx.fillStyle = '#fcfcfa';
             ctx.fillRect(0, 0, renderCanvas.width, renderCanvas.height);
             
-            // Subtle scanner paper grain noise simulations
             ctx.fillStyle = 'rgba(0,0,0,0.025)';
             for (let index = 0; index < 450; index++) {
                 ctx.fillRect(Math.random() * renderCanvas.width, Math.random() * renderCanvas.height, 2.5, 2.5);
             }
 
-            // Outer Edge Bleed borders
             ctx.strokeStyle = '#e2e8f0';
             ctx.lineWidth = 16;
             ctx.strokeRect(0, 0, renderCanvas.width, renderCanvas.height);
 
             if (type === 'invoice') {
-                // Procedural Contract/Invoice design
                 ctx.fillStyle = '#0f172a';
                 ctx.font = 'bold 50px sans-serif';
                 ctx.fillText("ENTERPRISE LEVEL CONTRACT", 100, 160);
@@ -718,7 +772,6 @@
                     yCoordinate += 45;
                 });
 
-                // Signature Fields block
                 ctx.fillStyle = '#1e293b';
                 ctx.font = 'bold 28px sans-serif';
                 ctx.fillText("IN WITNESS WHEREOF, the parties authorize execution below:", 100, yCoordinate + 80);
@@ -733,7 +786,6 @@
                 ctx.fillText("Authorized Representative (Licensor)", 100, yCoordinate + 280);
                 ctx.fillText("Authorized Signee (Licensee)", 690, yCoordinate + 280);
 
-                // Simulate Blue Ink Handwritten Signatures
                 ctx.strokeStyle = '#1d4ed8';
                 ctx.lineWidth = 4;
                 ctx.beginPath();
@@ -750,7 +802,6 @@
                 ctx.stroke();
 
             } else if (type === 'receipt') {
-                // Simulated paper receipt design
                 ctx.fillStyle = '#1e293b';
                 ctx.textAlign = 'center';
                 ctx.font = 'bold 36px monospace';
@@ -806,14 +857,12 @@
                 ctx.font = 'bold 22px monospace';
                 ctx.fillText("THANK YOU FOR YOUR PATRONAGE!", 400, yCoord + 300);
                 
-                // Procedural scanner bar code
                 ctx.fillStyle = '#000000';
                 for (let step = 180; step < 620; step += Math.random() > 0.4 ? 10 : 16) {
                     ctx.fillRect(step, yCoord + 340, Math.random() * 8 + 3, 75);
                 }
 
             } else if (type === 'idcard') {
-                // Identity standard cards
                 ctx.fillStyle = '#0f172a';
                 ctx.fillRect(20, 20, 972, 105);
 
@@ -821,12 +870,10 @@
                 ctx.font = 'bold 36px sans-serif';
                 ctx.fillText("GLOBAL RESIDENCY PASS", 60, 85);
 
-                // Avatar outline slot
                 ctx.strokeStyle = '#cbd5e1';
                 ctx.lineWidth = 4;
                 ctx.strokeRect(60, 175, 230, 290);
                 
-                // Procedural gray profile avatar silhouette
                 ctx.fillStyle = '#e2e8f0';
                 ctx.fillRect(62, 177, 226, 286);
                 
@@ -838,7 +885,6 @@
                 ctx.arc(175, 430, 90, Math.PI, 0);
                 ctx.fill();
 
-                // Printed profile texts fields
                 ctx.fillStyle = '#1e293b';
                 ctx.font = 'bold 30px sans-serif';
                 ctx.fillText("SURNAME:  RICHARDSON", 340, 230);
@@ -847,7 +893,6 @@
                 ctx.fillText("ROLE:     SENIOR RESEARCH LEAD", 340, 395);
                 ctx.fillText("EXPIRES:  31 DEC 2030", 340, 450);
 
-                // Gold security stamp
                 ctx.fillStyle = 'rgba(217, 119, 6, 0.2)';
                 ctx.beginPath();
                 ctx.arc(830, 340, 110, 0, Math.PI*2);
@@ -868,7 +913,6 @@
             btnSimulateTrigger.disabled = true;
             simLaserBar.classList.remove('hidden');
 
-            // Trigger mechanical simulation timelines
             setTimeout(() => {
                 simLaserBar.classList.add('hidden');
                 btnSimulateTrigger.disabled = false;
@@ -876,22 +920,14 @@
                 const synthesizedData = drawSynthesizedDoc(simulatorDocTemplate);
                 launchCropperCanvas(synthesizedData);
                 
-                triggerToast("Procedural template scanned successfully!", "success");
+                triggerToast("Procedural document generated & scanned!", "success");
             }, 2400);
         });
 
-        // Cropping UI Switchers and Initializers
         function launchCropperCanvas(imageSrc) {
             stopVideoCamera();
             
-            document.getElementById('source-selector-panel').classList.add('hidden');
-            paneCamera.classList.add('hidden');
-            paneUpload.classList.add('hidden');
-            paneSimulate.classList.add('hidden');
-            paneCrop.classList.remove('hidden');
-            paneResult.classList.add('hidden');
-            
-            updateStepperStatus(2);
+            currentStep = 2; // Move to Step 2: Crop
 
             imageWorkspace.src = imageSrc;
             
@@ -899,7 +935,8 @@
                 activeCropper.destroy();
             }
 
-            // High Precision cropper alignment configs
+            applyResponsiveLayout();
+
             setTimeout(() => {
                 activeCropper = new Cropper(imageWorkspace, {
                     viewMode: 2, 
@@ -922,27 +959,23 @@
                 activeCropper = null;
             }
             fileInput.value = '';
-            paneCrop.classList.add('hidden');
-            document.getElementById('source-selector-panel').classList.remove('hidden');
-            changeInputMode('camera');
+            currentStep = 1; // Back to Step 1: Source Selection
+            changeInputMode(currentTab);
         });
 
         btnCropConfirm.addEventListener('click', async () => {
             if (!activeCropper) return;
 
-            paneCrop.classList.add('hidden');
-            paneResult.classList.remove('remove');
-            paneResult.classList.remove('hidden');
-            updateStepperStatus(3);
+            currentStep = 3; // Forward to Step 3: Result Rendering
+            applyResponsiveLayout();
 
             resLoadingCard.classList.remove('hidden');
             resPreviewCard.classList.add('hidden');
             resActionPanel.classList.add('hidden');
             resStatusTitle.textContent = "Analyzing scanned pixels...";
 
-            // Retrieve the active canvas dimensions
             uncroppedImageSource = activeCropper.getCroppedCanvas({
-                maxWidth: 2500, // Maximum dimensions targeted for clarity
+                maxWidth: 2500, 
                 maxHeight: 2500
             });
 
@@ -956,7 +989,6 @@
             await processAndScaleImagePipeline();
         });
 
-        // Custom Hardware Color Modification Filters
         function modifyImagePixels(baseCanvas, filter) {
             const tempCanvas = document.createElement('canvas');
             tempCanvas.width = baseCanvas.width;
@@ -974,31 +1006,28 @@
                 const greenVal = rawBytes[i + 1];
                 const blueVal = rawBytes[i + 2];
 
-                // Human Luminosity formula constants
                 const luma = 0.299 * redVal + 0.587 * greenVal + 0.114 * blueVal;
 
                 if (filter === 'gray') {
-                    rawBytes[i] = luma;     // Red channel
-                    rawBytes[i + 1] = luma; // Green channel
-                    rawBytes[i + 2] = luma; // Blue channel
+                    rawBytes[i] = luma;     
+                    rawBytes[i + 1] = luma; 
+                    rawBytes[i + 2] = luma; 
                 } 
                 else if (filter === 'scan') {
-                    // Bleaches faint elements into clean white sheets, emphasizes dark ink details
                     let value = luma;
                     if (value > 125) {
-                        value = Math.min(255, value * 1.3); // Brighten backgrounds
+                        value = Math.min(255, value * 1.3); 
                     } else {
-                        value = Math.max(0, value * 0.75);  // Maximize legibility on text
+                        value = Math.max(0, value * 0.75);  
                     }
                     rawBytes[i] = value;
                     rawBytes[i + 1] = value;
                     rawBytes[i + 2] = value;
                 }
                 else if (filter === 'blue') {
-                    // Premium schematic retro blueprint filter layout
-                    rawBytes[i] = Math.max(0, luma - 100);       // Minimize red channel
-                    rawBytes[i + 1] = Math.max(0, luma - 20);    // Light green
-                    rawBytes[i + 2] = Math.min(255, luma + 90);  // High amplitude blue channel
+                    rawBytes[i] = Math.max(0, luma - 100);       
+                    rawBytes[i + 1] = Math.max(0, luma - 20);    
+                    rawBytes[i + 2] = Math.min(255, luma + 90);  
                 }
             }
 
@@ -1006,7 +1035,6 @@
             return tempCanvas;
         }
 
-        // Action Tab updates on Filter Buttons
         filterBtnOrig.addEventListener('click', () => selectNewFilterLayer('orig'));
         filterBtnScan.addEventListener('click', () => selectNewFilterLayer('scan'));
         filterBtnGray.addEventListener('click', () => selectNewFilterLayer('gray'));
@@ -1036,43 +1064,37 @@
             });
         }
 
-        // Target Guided Compressing Processor Logic (Hard Thresholding to under 300KB)
         async function processAndScaleImagePipeline() {
             resLoadingCard.classList.remove('hidden');
             resStatusTitle.textContent = "Calibrating document resolution...";
-            resStatusSubtitle.textContent = "Scaling dimensions to fit target limit constraints";
+            resStatusSubtitle.textContent = "Adjusting canvas parameters to auto-fit target weight.";
 
             try {
-                // Apply specified processing layers
                 const styledCanvas = modifyImagePixels(uncroppedImageSource, currentActiveFilter);
                 
-                // Recursive loop scaling compression pipeline to hit under 300KB target natively
-                resStatusTitle.textContent = "Compressing below 300KB...";
+                resStatusTitle.textContent = "Compressing directly to under 300KB...";
                 const outputBlob = await fitImageScaleToTargetBytes(styledCanvas, APP_LIMIT_BYTES);
                 
                 processedBlob = outputBlob;
                 
-                // Create local temporary URL object links
                 const dataUrl = URL.createObjectURL(outputBlob);
                 resRenderImg.src = dataUrl;
                 
                 const verifiedKB = (outputBlob.size / 1024).toFixed(2);
                 targetKbDisplay.textContent = `${verifiedKB} KB / 300 KB`;
                 
-                // Calculate dynamic visual sizing meters
                 const percentCap = Math.min(100, (outputBlob.size / APP_LIMIT_BYTES) * 100);
                 compGaugeBar.style.width = `${percentCap}%`;
 
                 if (outputBlob.size > APP_LIMIT_BYTES) {
                     compGaugeBar.className = "bg-amber-500 h-1.5 rounded-full transition-all duration-300";
                     targetKbDisplay.className = "font-mono-code text-amber-400";
-                    triggerToast("Optimal limit hit. File is compressed at safest threshold.", "info");
+                    triggerToast("Max threshold reached. Quality compressed at safest limits.", "info");
                 } else {
                     compGaugeBar.className = "bg-emerald-500 h-1.5 rounded-full transition-all duration-300";
                     targetKbDisplay.className = "font-mono-code text-emerald-400";
                 }
 
-                // Smoothly unhide workspace cards
                 resLoadingCard.classList.add('hidden');
                 resPreviewCard.classList.remove('hidden');
                 resActionPanel.classList.remove('hidden');
@@ -1080,7 +1102,7 @@
             } catch (error) {
                 console.error("Compression Pipeline failure: ", error);
                 resStatusTitle.textContent = "Compression Exception Encountered.";
-                resStatusSubtitle.textContent = "Reduce starting camera resolution settings.";
+                resStatusSubtitle.textContent = "Decrease image dimensions to prevent canvas memory leaks.";
                 triggerToast("System error during image processing.", "error");
             }
         }
@@ -1100,14 +1122,11 @@
             
             let evaluatedBlob = await calculateBlobFromCanvas(canvas, 'image/jpeg', compressionRatio);
             
-            // Phase A: Reduce quality compression values first
             while (evaluatedBlob.size > maxAllowedBytes && compressionRatio > absoluteMinRatio) {
                 compressionRatio -= degradationStep;
                 evaluatedBlob = await calculateBlobFromCanvas(canvas, 'image/jpeg', compressionRatio);
-                console.log(`JPEG Quality Scale Loop: ${compressionRatio.toFixed(2)} - Size: ${(evaluatedBlob.size/1024).toFixed(1)} KB`);
             }
 
-            // Phase B: Downsize resolution scale grid dimensions if still exceeding target limits
             if (evaluatedBlob.size > maxAllowedBytes) {
                 let scalingFactor = 0.85;
                 let internalCanvas = canvas;
@@ -1123,8 +1142,6 @@
                     ctx.drawImage(internalCanvas, 0, 0, scaledWidth, scaledHeight);
                     
                     evaluatedBlob = await calculateBlobFromCanvas(shrinkCanvas, 'image/jpeg', 0.65);
-                    console.log(`Resolution Scaling Downscale: ${scalingFactor.toFixed(2)} - Size: ${(evaluatedBlob.size/1024).toFixed(1)} KB`);
-                    
                     internalCanvas = shrinkCanvas;
                     scalingFactor -= 0.1;
                 }
@@ -1132,7 +1149,6 @@
             return evaluatedBlob;
         }
 
-        // Core Export PDF Synthesizer (Using jsPDF Framework and custom target scaling checks)
         async function buildPdfDocument() {
             return new Promise((resolve, reject) => {
                 if (!processedBlob) {
@@ -1148,7 +1164,6 @@
                         const base64Data = reader.result;
                         const { jsPDF } = window.jspdf;
                         
-                        // Construct Standard Portrait A4 Layout sheets
                         const finalPdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
 
                         const widthBoundary = finalPdf.internal.pageSize.getWidth();
@@ -1167,7 +1182,6 @@
                             let drawX = 0;
                             let drawY = 0;
 
-                            // Scale to A4 preserving native aspect ratio without distortion
                             if (imageRatio > pdfRatio) {
                                 scaledH = widthBoundary / imageRatio;
                                 drawY = (heightBoundary - scaledH) / 2; 
@@ -1195,7 +1209,7 @@
             try {
                 const { finalPdf, fileName } = await buildPdfDocument();
                 finalPdf.save(`${fileName}.pdf`);
-                triggerToast("Document PDF downloaded successfully!", "success");
+                triggerToast("Optimal PDF document downloaded successfully!", "success");
             } catch (error) {
                 console.error("PDF generation failure: ", error);
                 triggerToast("PDF compilation error.", "error");
@@ -1205,7 +1219,6 @@
             }
         });
 
-        // Alternate High-Quality Image Saving Capability
         btnSaveImage.addEventListener('click', () => {
             if (!processedBlob) return;
             
@@ -1219,10 +1232,9 @@
             localLink.click();
             document.body.removeChild(localLink);
             
-            triggerToast("Snapshot saved as JPEG image!", "success");
+            triggerToast("Document saved as high-contrast image!", "success");
         });
 
-        // Direct Web Sharing API Implementation with System Fallback handling
         btnShareTrigger.addEventListener('click', async () => {
             const originalButtonText = btnShareTrigger.innerHTML;
             btnShareTrigger.innerHTML = '<div class="loader-ring" style="width:14px; height:14px; border-width:2px; display:inline-block; vertical-align:middle; margin-right:5px;"></div> Preparing...';
@@ -1233,21 +1245,20 @@
                 const binaryPDF = finalPdf.output('blob');
                 const parsedFileObj = new File([binaryPDF], `${fileName}.pdf`, { type: 'application/pdf' });
                 
-                // Assess direct device native sharing capabilities
                 if (navigator.canShare && navigator.canShare({ files: [parsedFileObj] })) {
                     await navigator.share({
                         title: fileName,
-                        text: 'Sharing high-clarity scanned document from DocScanner Pro.',
+                        text: 'Sharing compiled PDF from DocScanner Pro.',
                         files: [parsedFileObj]
                     });
                 } else {
-                    triggerToast("Native web sharing blocked on browser. Initializing direct PDF download.", "info");
+                    triggerToast("Native web sharing unsupported on this system. Downloading directly.", "info");
                     finalPdf.save(`${fileName}.pdf`);
                 }
             } catch (error) {
                 console.error("Device Share failure: ", error);
                 if (error.name !== 'AbortError') {
-                    triggerToast("Sharing cancelled or unsupported on current device.", "error");
+                    triggerToast("Sharing action aborted or blocked on this connection.", "error");
                 }
             } finally {
                 btnShareTrigger.innerHTML = originalButtonText;
@@ -1264,18 +1275,20 @@
             }
             fileInput.value = '';
             
-            paneResult.classList.add('hidden');
-            document.getElementById('source-selector-panel').classList.remove('hidden');
-            changeInputMode('camera');
+            currentStep = 1;
+            changeInputMode(currentTab);
             
             compGaugeBar.style.width = '0%';
             targetKbDisplay.textContent = '0.00 KB / 300 KB';
         });
 
-        // Run application setup
+        // Event listener for viewport adjustments to recalibrate grid frames adaptively
+        window.addEventListener('resize', applyResponsiveLayout);
+
+        // Run application setup on loaded elements
         window.addEventListener('DOMContentLoaded', () => {
             changeSimulatorTemplate('invoice');
-            changeInputMode('camera'); // Initial default starting panel
+            changeInputMode('camera'); 
         });
     </script>
 </body>
