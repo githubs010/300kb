@@ -222,7 +222,7 @@
                     </div>
                 </div>
 
-                <!-- SUB-SECTION 3: Flatbed Virtual Scanner Simulation -->
+                <!-- SUB-SECTION 3: Flatbed Virtual Scanner Simulation & Hardware Scanner Portal -->
                 <div id="pane-simulate" class="hidden flex-1 flex flex-col justify-between gap-4 max-w-[420px] w-full mx-auto">
                     <!-- Mechanical Scanner Bed Visual -->
                     <div class="relative w-full aspect-[4/3] bg-slate-950 rounded-2xl border border-slate-850 overflow-hidden shadow-inner flex items-center justify-center p-3">
@@ -241,6 +241,22 @@
 
                             <div id="simulated-laser-bar" class="absolute left-1 right-1 h-1.5 bg-gradient-to-r from-blue-500 via-cyan-400 to-blue-500 shadow-[0_0_12px_#3b82f6] hidden laser-beam z-20"></div>
                         </div>
+                    </div>
+
+                    <!-- External Scanner Helper Guidance Portal -->
+                    <div class="bg-slate-950/80 p-3.5 rounded-xl border border-slate-800 flex flex-col gap-2">
+                        <div class="flex items-center gap-2">
+                            <span class="p-1 bg-amber-950 border border-amber-800 text-amber-400 rounded-md text-[10px] font-bold font-mono-code">EXTERNAL USB SCANNER</span>
+                            <span class="text-[10px] text-slate-400 font-semibold">HP, Epson, Canon, Brother</span>
+                        </div>
+                        <p class="text-[11px] text-slate-400 leading-relaxed">
+                            To scan physically: utilize your printer's native scan panel to create a local image file. Then click below to feed it into the 300KB optimization matrix:
+                        </p>
+                        <button onclick="document.getElementById('external-scanner-input').click()" class="w-full py-2 bg-slate-900 hover:bg-slate-850 text-slate-200 border border-slate-800 rounded-lg text-xs font-bold transition flex items-center justify-center gap-1.5">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                            Import Scanned File From Device
+                        </button>
+                        <input type="file" id="external-scanner-input" accept="image/*" class="hidden" />
                     </div>
 
                     <!-- Simulation Settings -->
@@ -385,10 +401,17 @@
                             </button>
                         </div>
 
-                        <button id="btn-share-trigger" class="w-full py-3.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl font-bold text-xs tracking-wider uppercase flex justify-center items-center gap-2 transition">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M8.684 10.742l4.307-2.153m0 2.822l-4.307-2.153m11.014-2.822a3 3 0 11-6 0 3 3 0 016 0zm-6 10a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
-                            Share File
-                        </button>
+                        <div class="grid grid-cols-2 gap-2">
+                            <button id="btn-print-doc" class="py-3.5 bg-slate-950 border border-slate-850 hover:bg-slate-900 text-slate-300 rounded-xl font-bold text-xs tracking-wider uppercase flex justify-center items-center gap-2 transition">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg>
+                                Print Doc
+                            </button>
+
+                            <button id="btn-share-trigger" class="py-3.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl font-bold text-xs tracking-wider uppercase flex justify-center items-center gap-2 transition">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M8.684 10.742l4.307-2.153m0 2.822l-4.307-2.153m11.014-2.822a3 3 0 11-6 0 3 3 0 016 0zm-6 10a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                                Share File
+                            </button>
+                        </div>
 
                         <button id="btn-result-reset" class="w-full py-3 mt-1 bg-slate-950/40 hover:bg-slate-950 text-slate-400 hover:text-white rounded-xl font-bold text-xs transition border border-slate-850">
                             Scan New Page
@@ -443,9 +466,11 @@
         const btnCropConfirm = document.getElementById('btn-crop-confirm');
         const btnSavePdf = document.getElementById('btn-save-pdf');
         const btnSaveImage = document.getElementById('btn-save-image');
+        const btnPrintDoc = document.getElementById('btn-print-doc');
         const btnShareTrigger = document.getElementById('btn-share-trigger');
         const btnResultReset = document.getElementById('btn-result-reset');
         const fileInput = document.getElementById('file-input');
+        const externalScannerInput = document.getElementById('external-scanner-input');
         const inputExportFilename = document.getElementById('input-export-filename');
 
         const filterBtnOrig = document.getElementById('filter-btn-orig');
@@ -561,7 +586,7 @@
                     bubble.className = `w-4 h-4 rounded-full bg-slate-900 border border-current flex items-center justify-center text-[10px]`;
                 } else if (s.id < step) {
                     s.lbl.className = `flex items-center gap-1.5 text-slate-500`;
-                    bubble.className = `w-4 h-4 rounded-full bg-slate-950 border border-slate-800 flex items-center justify-center text-[10px] text-slate-600`;
+                    bubble.className = `w-4 h-4 rounded-full bg-slate-950 border border-slate-880 flex items-center justify-center text-[10px] text-slate-600`;
                 } else {
                     s.lbl.className = `flex items-center gap-1.5 text-slate-600`;
                     bubble.className = `w-4 h-4 rounded-full bg-slate-950 border border-slate-900 flex items-center justify-center text-[10px] text-slate-700`;
@@ -669,6 +694,17 @@
         });
 
         fileInput.addEventListener('change', (event) => {
+            const parsedFile = event.target.files[0];
+            if (parsedFile) {
+                const fileReader = new FileReader();
+                fileReader.onload = (e) => {
+                    launchCropperCanvas(e.target.result);
+                };
+                fileReader.readAsDataURL(parsedFile);
+            }
+        });
+
+        externalScannerInput.addEventListener('change', (event) => {
             const parsedFile = event.target.files[0];
             if (parsedFile) {
                 const fileReader = new FileReader();
@@ -959,6 +995,7 @@
                 activeCropper = null;
             }
             fileInput.value = '';
+            externalScannerInput.value = '';
             currentStep = 1; // Back to Step 1: Source Selection
             changeInputMode(currentTab);
         });
@@ -1235,6 +1272,68 @@
             triggerToast("Document saved as high-contrast image!", "success");
         });
 
+        // Ink-saving Printer Output utility optimized for external USB / AirPrint printers
+        btnPrintDoc.addEventListener('click', () => {
+            if (!processedBlob) {
+                triggerToast("No processed document available to print.", "error");
+                return;
+            }
+
+            const docBlobUrl = URL.createObjectURL(processedBlob);
+            const printFrame = document.createElement('iframe');
+            printFrame.style.position = 'fixed';
+            printFrame.style.right = '0';
+            printFrame.style.bottom = '0';
+            printFrame.style.width = '0';
+            printFrame.style.height = '0';
+            printFrame.style.border = '0';
+            document.body.appendChild(printFrame);
+            
+            printFrame.onload = () => {
+                setTimeout(() => {
+                    printFrame.contentWindow.focus();
+                    printFrame.contentWindow.print();
+                    setTimeout(() => {
+                        document.body.removeChild(printFrame);
+                    }, 1500);
+                }, 500);
+            };
+            
+            // Layout structured perfectly to run cleanly on A4 printers without dark styling ink-waste
+            const htmlContent = `
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>Print Document - DocScanner Pro</title>
+                    <style>
+                        @page {
+                            size: A4 portrait;
+                            margin: 10mm;
+                        }
+                        body {
+                            margin: 0;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            height: 100vh;
+                            background-color: #ffffff;
+                        }
+                        img {
+                            max-width: 100%;
+                            max-height: 100%;
+                            object-fit: contain;
+                        }
+                    </style>
+                </head>
+                <body>
+                    <img src="${docBlobUrl}" />
+                </body>
+                </html>
+            `;
+            printFrame.contentDocument.write(htmlContent);
+            printFrame.contentDocument.close();
+        });
+
         btnShareTrigger.addEventListener('click', async () => {
             const originalButtonText = btnShareTrigger.innerHTML;
             btnShareTrigger.innerHTML = '<div class="loader-ring" style="width:14px; height:14px; border-width:2px; display:inline-block; vertical-align:middle; margin-right:5px;"></div> Preparing...';
@@ -1274,6 +1373,7 @@
                 activeCropper = null;
             }
             fileInput.value = '';
+            externalScannerInput.value = '';
             
             currentStep = 1;
             changeInputMode(currentTab);
