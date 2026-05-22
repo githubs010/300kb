@@ -109,6 +109,24 @@
         ::-webkit-scrollbar-thumb:hover {
             background: #334155;
         }
+
+        /* Cropper customization overrides for dark theme */
+        .cropper-view-box {
+            outline: 2px solid #3b82f6;
+            outline-color: rgba(59, 130, 246, 0.8);
+        }
+        .cropper-line {
+            background-color: #3b82f6;
+        }
+        .cropper-point {
+            background-color: #3b82f6;
+            width: 8px;
+            height: 8px;
+        }
+        .cropper-bg {
+            background-image: none !important;
+            background-color: rgba(0,0,0,0.7) !important;
+        }
     </style>
 </head>
 <body class="h-screen w-screen overflow-hidden flex items-center justify-center text-slate-100 p-0 md:p-6">
@@ -150,20 +168,15 @@
 
             <!-- Input Tabs Selector -->
             <div id="source-selector-panel" class="p-4 border-b border-slate-850 flex-shrink-0 bg-slate-950/20">
-                <div class="bg-slate-950 p-1 rounded-xl border border-slate-850 grid grid-cols-3 gap-1">
-                    <button id="tab-btn-camera" class="py-2.5 rounded-lg text-xs font-bold flex flex-col items-center gap-1.5 transition duration-200">
+                <div class="bg-slate-950 p-1 rounded-xl border border-slate-850 grid grid-cols-2 gap-1">
+                    <button id="tab-btn-camera" class="py-2.5 rounded-lg text-xs font-bold flex flex-col items-center gap-1.5 transition duration-200 bg-slate-900 text-blue-400 border border-slate-800 shadow-sm">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" /><circle cx="12" cy="13" r="3" /></svg>
                         <span>Camera App</span>
                     </button>
                     
-                    <button id="tab-btn-upload" class="py-2.5 rounded-lg text-xs font-bold flex flex-col items-center gap-1.5 transition duration-200">
+                    <button id="tab-btn-upload" class="py-2.5 rounded-lg text-xs font-bold flex flex-col items-center gap-1.5 transition duration-200 text-slate-400 hover:text-white">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>
                         <span>Load Image</span>
-                    </button>
-                    
-                    <button id="tab-btn-simulate" class="py-2.5 rounded-lg text-xs font-bold flex flex-col items-center gap-1.5 transition duration-200">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01" /></svg>
-                        <span>Flatbed Scan</span>
                     </button>
                 </div>
             </div>
@@ -191,7 +204,7 @@
 
                     <div class="flex flex-col gap-3 max-w-[420px] w-full mx-auto">
                         <p class="text-xs font-semibold text-slate-400 text-center" id="camera-status-msg">
-                            Establishing secure connection...
+                            Establishing secure camera stream...
                         </p>
                         
                         <div class="grid grid-cols-12 gap-2">
@@ -209,7 +222,7 @@
 
                 <!-- SUB-SECTION 2: Upload Files/Existing Images -->
                 <div id="pane-upload" class="hidden flex-1 flex flex-col justify-center py-6 max-w-[420px] w-full mx-auto">
-                    <div class="border-2 border-dashed border-slate-800 hover:border-blue-500/50 bg-slate-950/60 transition-all rounded-2xl p-8 flex flex-col items-center justify-center text-center cursor-pointer group" onclick="document.getElementById('file-input').click()">
+                    <div id="drop-zone" class="border-2 border-dashed border-slate-800 hover:border-blue-500/50 bg-slate-950/60 transition-all rounded-2xl p-8 flex flex-col items-center justify-center text-center cursor-pointer group">
                         <div class="w-14 h-14 bg-slate-900 group-hover:bg-blue-950/40 rounded-full flex items-center justify-center mb-4 transition border border-slate-850 group-hover:border-blue-900/40">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-slate-400 group-hover:text-blue-400 transition" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
@@ -217,117 +230,12 @@
                         </div>
                         <span class="text-xs font-bold text-slate-200 mb-1">Upload Existing Document Image</span>
                         <span class="text-[10px] text-slate-500 max-w-[200px] leading-relaxed mb-3">Load gallery snapshots (JPEG, PNG) directly to initiate crop & compression</span>
-                        <span class="bg-slate-900 border border-slate-800 group-hover:bg-blue-600 group-hover:text-white px-3 py-1.5 rounded-lg text-[10px] font-bold tracking-wide transition text-slate-400">Select File</span>
+                        <button class="bg-slate-900 border border-slate-800 group-hover:bg-blue-600 group-hover:text-white px-3 py-1.5 rounded-lg text-[10px] font-bold tracking-wide transition text-slate-400">Select File</button>
                         <input type="file" id="file-input" accept="image/*" class="hidden" />
                     </div>
                 </div>
 
-                <!-- SUB-SECTION 3: Flatbed Virtual Scanner Simulation & Hardware Scanner Portal -->
-                <div id="pane-simulate" class="hidden flex-1 flex flex-col justify-between gap-4 max-w-[420px] w-full mx-auto">
-                    
-                    <!-- Network & Physical USB Printer Integration Suite -->
-                    <div class="bg-slate-950 p-3.5 rounded-2xl border border-slate-850 flex flex-col gap-2.5">
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center gap-1.5">
-                                <span class="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                                <span class="text-[11px] font-bold tracking-tight text-white uppercase">Active Printer Interface</span>
-                            </div>
-                            <span class="bg-blue-950/80 border border-blue-900 text-blue-400 px-2 py-0.5 rounded text-[8px] font-bold font-mono-code uppercase">WIA / eSCL</span>
-                        </div>
 
-                        <!-- Active Hardware Selectors -->
-                        <div class="grid grid-cols-2 gap-2">
-                            <div>
-                                <label class="block text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-1">Select Hardware</label>
-                                <select id="hardware-device-select" class="w-full bg-slate-900 text-slate-200 border border-slate-800 rounded-lg p-2 text-xs font-semibold focus:outline-none focus:border-blue-500">
-                                    <option value="hp-officejet">HP OfficeJet WebScan</option>
-                                    <option value="epson-et">Epson EcoTank Portal</option>
-                                    <option value="canon-pixma">Canon PIXMA Gateway</option>
-                                    <option value="brother-mfc">Brother MFC Device</option>
-                                    <option value="generic">Generic Network Scanner</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-1">Resolution (DPI)</label>
-                                <select id="hardware-dpi-select" class="w-full bg-slate-900 text-slate-200 border border-slate-800 rounded-lg p-2 text-xs font-semibold focus:outline-none focus:border-blue-500">
-                                    <option value="150">150 DPI (Quick Scan)</option>
-                                    <option value="200" selected>200 DPI (Standard)</option>
-                                    <option value="300">300 DPI (High-Quality)</option>
-                                    <option value="600">600 DPI (Maximum Archive)</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <!-- Network Printer IP Bridge Portal -->
-                        <div class="mt-1 border-t border-slate-900 pt-2 flex flex-col gap-1.5">
-                            <div class="flex justify-between items-center">
-                                <label for="printer-ip-address" class="block text-[9px] font-bold text-slate-400 uppercase tracking-wider">Printer Local IP / Host</label>
-                                <button onclick="toggleScannerDiagnostic()" class="text-[9px] font-bold text-blue-400 hover:text-blue-300">Connection Guide ✕</button>
-                            </div>
-                            <div class="flex gap-1.5">
-                                <input type="text" id="printer-ip-address" placeholder="e.g. 192.168.1.100" class="flex-1 bg-slate-900 border border-slate-800 rounded-lg p-2 text-xs font-semibold text-slate-100 placeholder-slate-600 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/30">
-                                <button id="btn-ews-launch" class="bg-slate-900 hover:bg-slate-850 text-slate-200 border border-slate-800 px-3 rounded-lg text-xs font-bold transition flex items-center gap-1.5" title="Open printer embedded WebScan utilities directly">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-blue-400" viewBox="0 0 20 20" fill="currentColor"><path d="M11 3a1 1 0 100 2h2.586l-6.293 6.293a1 1 0 101.414 1.414L15 6.414V9a1 1 0 102 0V4a1 1 0 00-1-1h-5z"/></svg>
-                                    EWS Connect
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- Guided diagnostics hidden drawer -->
-                        <div id="scanner-diagnostic-card" class="hidden mt-1 p-2 bg-slate-900 border border-slate-800 rounded-lg text-[10px] text-slate-400 leading-relaxed flex flex-col gap-1">
-                            <p class="font-bold text-amber-400">⚡ Direct Hardware Scan Instructions:</p>
-                            <p>1. Ensure printer & computer are connected to the same Wi-Fi / LAN network.</p>
-                            <p>2. Locate your printer's IP address on its touch LCD screen menu.</p>
-                            <p>3. Enter the IP above and click <b class="text-white">"EWS Connect"</b> to scan directly from your device using the browser native WebScan page!</p>
-                        </div>
-                    </div>
-
-                    <!-- Mechanical Scanner Bed Visual -->
-                    <div class="relative w-full aspect-[4/3] bg-slate-950 rounded-2xl border border-slate-850 overflow-hidden shadow-inner flex items-center justify-center p-3">
-                        <div id="flatbed-viewport" class="absolute inset-0 bg-slate-950 border-4 border-slate-900 rounded-xl flex items-center justify-center overflow-hidden">
-                            <div class="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:16px_16px] pointer-events-none"></div>
-                            
-                            <!-- Simulated Placed Paper Silhouette -->
-                            <div id="procedural-paper-preview" class="w-[48%] aspect-[1/1.4] bg-white rounded shadow-2xl border border-slate-200 relative transition-all duration-300 flex flex-col items-center justify-center p-4">
-                                <div class="w-full h-full flex flex-col gap-2 overflow-hidden pointer-events-none opacity-50">
-                                    <div class="h-2 w-1/2 bg-slate-400 rounded"></div>
-                                    <div class="h-1.5 w-full bg-slate-200 rounded"></div>
-                                    <div class="h-1.5 w-4/5 bg-slate-200 rounded"></div>
-                                    <div class="mt-auto h-2.5 w-1/3 bg-slate-400 rounded self-end"></div>
-                                </div>
-                            </div>
-
-                            <div id="simulated-laser-bar" class="absolute left-1 right-1 h-1.5 bg-gradient-to-r from-blue-500 via-cyan-400 to-blue-500 shadow-[0_0_12px_#3b82f6] hidden laser-beam z-20"></div>
-                        </div>
-                    </div>
-
-                    <!-- Import Scanned Image Target from Device -->
-                    <div class="bg-slate-950/80 p-3 rounded-xl border border-slate-800 flex flex-col gap-2">
-                        <p class="text-[11px] text-slate-400 leading-relaxed text-center">
-                            Trigger your printer's scanner button to scan. Once completed, load the scan to compress it directly to under 300KB:
-                        </p>
-                        <button onclick="document.getElementById('external-scanner-input').click()" class="w-full py-2 bg-slate-900 hover:bg-slate-850 text-slate-200 border border-slate-800 rounded-lg text-xs font-bold transition flex items-center justify-center gap-1.5">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                            Import Scanned File From Device
-                        </button>
-                        <input type="file" id="external-scanner-input" accept="image/*" class="hidden" />
-                    </div>
-
-                    <!-- Simulation Settings -->
-                    <div class="bg-slate-950 p-3 rounded-xl border border-slate-850">
-                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 text-center">Procedural Templates</p>
-                        <div class="grid grid-cols-3 gap-1.5 mb-3.5">
-                            <button id="tpl-item-invoice" class="py-2 text-[11px] font-bold rounded-lg border text-center transition">💼 Contract</button>
-                            <button id="tpl-item-receipt" class="py-2 text-[11px] font-bold rounded-lg border text-center transition">🧾 Receipt</button>
-                            <button id="tpl-item-idcard" class="py-2 text-[11px] font-bold rounded-lg border text-center transition">🪪 ID Card</button>
-                        </div>
-
-                        <button id="btn-simulate-trigger" class="w-full py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-bold text-xs tracking-wider uppercase transition flex justify-center items-center gap-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
-                            Initiate Scanner Device
-                        </button>
-                    </div>
-                </div>
             </div>
         </div>
 
@@ -358,13 +266,13 @@
             <div class="flex-1 overflow-y-auto p-4 flex flex-col justify-center">
 
                 <!-- STATE 1: Desktop Idle Workspace Empty State -->
-                <div id="desktop-idle-pane" class="hidden md:flex flex-col items-center justify-center text-center p-8 my-auto gap-4">
+                <div id="desktop-idle-pane" class="flex flex-col items-center justify-center text-center p-8 my-auto gap-4">
                     <div class="w-16 h-16 rounded-2xl bg-blue-950/30 border border-blue-900/30 flex items-center justify-center text-blue-500 animate-pulse">
                         <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
                     </div>
                     <div>
                         <h3 class="text-sm font-bold text-slate-200">Awaiting Document Source</h3>
-                        <p class="text-xs text-slate-500 max-w-[250px] mt-1 leading-relaxed">Capture from lens, load a gallery image, or trigger a flatbed scan on the left to begin editing.</p>
+                        <p class="text-xs text-slate-500 max-w-[250px] mt-1 leading-relaxed">Capture from lens or load a gallery image on the left to begin editing.</p>
                     </div>
                 </div>
 
@@ -404,10 +312,10 @@
                         
                         <!-- Color Enhancing Filter Options -->
                         <div class="bg-slate-950 p-1 rounded-xl border border-slate-850 grid grid-cols-4 gap-1">
-                            <button id="filter-btn-orig" class="py-1.5 text-[10px] font-bold rounded-lg transition">Original</button>
-                            <button id="filter-btn-scan" class="py-1.5 text-[10px] font-bold rounded-lg transition" title="Bleaches sheet background & boosts print dark levels">Magic Scan</button>
-                            <button id="filter-btn-gray" class="py-1.5 text-[10px] font-bold rounded-lg transition">Grayscale</button>
-                            <button id="filter-btn-blue" class="py-1.5 text-[10px] font-bold rounded-lg transition">Blueprint</button>
+                            <button id="filter-btn-orig" class="py-1.5 text-[10px] font-bold rounded-lg transition bg-slate-900 text-blue-400 border border-slate-800 shadow-sm">Original</button>
+                            <button id="filter-btn-scan" class="py-1.5 text-[10px] font-bold rounded-lg transition text-slate-400 hover:text-white" title="Bleaches sheet background & boosts print dark levels">Magic Scan</button>
+                            <button id="filter-btn-gray" class="py-1.5 text-[10px] font-bold rounded-lg transition text-slate-400 hover:text-white">Grayscale</button>
+                            <button id="filter-btn-blue" class="py-1.5 text-[10px] font-bold rounded-lg transition text-slate-400 hover:text-white">Blueprint</button>
                         </div>
 
                         <!-- Render Frame Preview and Size HUD -->
@@ -438,7 +346,7 @@
                         <div class="w-full">
                             <label for="input-export-filename" class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">Save Document As</label>
                             <div class="relative">
-                                <input type="text" id="input-export-filename" value="Scanned_Document" class="block w-full rounded-xl bg-slate-950 border border-slate-850 py-3.5 pl-3.5 pr-12 text-xs font-semibold text-slate-100 placeholder-slate-600 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/30 transition">
+                                <input type="text" id="input-export-filename" value="Scanned_Document" class="block w-full rounded-xl bg-slate-950 border border-slate-850 py-3.5 pl-3.5 pr-12 text-xs font-semibold text-slate-100 placeholder-slate-600 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/30 transition text-slate-200">
                                 <span class="absolute right-3.5 top-1/2 -translate-y-1/2 text-[10px] font-bold font-mono-code text-slate-500">.pdf</span>
                             </div>
                         </div>
@@ -477,7 +385,7 @@
     </div>
 
     <!-- Hidden canvas configuration to process offscreen image buffers -->
-    <canvas id="canvas-element"></canvas>
+    <canvas id="canvas-element" class="hidden"></canvas>
 
     <script>
         const APP_LIMIT_KB = 300;
@@ -489,22 +397,20 @@
         let processedBlob = null;
         let uncroppedImageSource = null;
         let currentActiveFilter = 'orig';
-        let simulatorDocTemplate = 'invoice';
         
         // Navigation States
         let currentStep = 1; // 1: Source, 2: Crop, 3: Filter & Result
-        let currentTab = 'camera'; // 'camera', 'upload', 'simulate'
+        let currentTab = 'camera'; // 'camera', 'upload'
 
         // DOM elements
         const tabBtnCamera = document.getElementById('tab-btn-camera');
         const tabBtnUpload = document.getElementById('tab-btn-upload');
-        const tabBtnSimulate = document.getElementById('tab-btn-simulate');
 
         const paneCamera = document.getElementById('pane-camera');
         const paneUpload = document.getElementById('pane-upload');
-        const paneSimulate = document.getElementById('pane-simulate');
         const paneCrop = document.getElementById('pane-crop');
         const paneResult = document.getElementById('pane-result');
+        const desktopIdlePane = document.getElementById('desktop-idle-pane');
 
         const labelStep1 = document.getElementById('step-1-lbl');
         const labelStep2 = document.getElementById('step-2-lbl');
@@ -524,7 +430,7 @@
         const btnShareTrigger = document.getElementById('btn-share-trigger');
         const btnResultReset = document.getElementById('btn-result-reset');
         const fileInput = document.getElementById('file-input');
-        const externalScannerInput = document.getElementById('external-scanner-input');
+        const dropZone = document.getElementById('drop-zone');
         const inputExportFilename = document.getElementById('input-export-filename');
 
         const filterBtnOrig = document.getElementById('filter-btn-orig');
@@ -543,18 +449,6 @@
         const resStatusTitle = document.getElementById('result-status-title');
         const resStatusSubtitle = document.getElementById('result-status-subtitle');
 
-        const tplItemInvoice = document.getElementById('tpl-item-invoice');
-        const tplItemReceipt = document.getElementById('tpl-item-receipt');
-        const tplItemIdcard = document.getElementById('tpl-item-idcard');
-        const btnSimulateTrigger = document.getElementById('btn-simulate-trigger');
-        const simLaserBar = document.getElementById('simulated-laser-bar');
-        const paperPreview = document.getElementById('procedural-paper-preview');
-
-        // Printer specific selectors
-        const printerIpInput = document.getElementById('printer-ip-address');
-        const hardwareDeviceSelect = document.getElementById('hardware-device-select');
-        const btnEwsLaunch = document.getElementById('btn-ews-launch');
-
         function triggerToast(message, type = 'info') {
             const toast = document.getElementById('toast-notification');
             const icon = document.getElementById('toast-icon');
@@ -563,11 +457,11 @@
             msg.textContent = message;
             
             if (type === 'error') {
-                icon.innerHTML = `<div class="w-6 h-6 bg-red-950 border border-red-800 text-red-400 flex items-center justify-center rounded-lg">✕</div>`;
+                icon.innerHTML = `<div class="w-6 h-6 bg-red-950 border border-red-800 text-red-400 flex items-center justify-center rounded-lg font-bold text-xs">✕</div>`;
             } else if (type === 'success') {
-                icon.innerHTML = `<div class="w-6 h-6 bg-emerald-950 border border-emerald-800 text-emerald-400 flex items-center justify-center rounded-lg">✓</div>`;
+                icon.innerHTML = `<div class="w-6 h-6 bg-emerald-950 border border-emerald-800 text-emerald-400 flex items-center justify-center rounded-lg font-bold text-xs">✓</div>`;
             } else {
-                icon.innerHTML = `<div class="w-6 h-6 bg-blue-950 border border-blue-800 text-blue-400 flex items-center justify-center rounded-lg">i</div>`;
+                icon.innerHTML = `<div class="w-6 h-6 bg-blue-950 border border-blue-800 text-blue-400 flex items-center justify-center rounded-lg font-bold text-xs">i</div>`;
             }
 
             toast.classList.remove('-translate-y-24', 'opacity-0');
@@ -575,7 +469,7 @@
 
             setTimeout(() => {
                 hideToast();
-            }, 4500);
+            }, 5000);
         }
 
         function hideToast() {
@@ -584,99 +478,9 @@
             toast.classList.remove('translate-y-0', 'opacity-100');
         }
 
-        function toggleScannerDiagnostic() {
-            const card = document.getElementById('scanner-diagnostic-card');
-            card.classList.toggle('hidden');
-        }
 
-        // Web Audio Synthesizer to create a realistic physical scanner Whirring and laser sound
-        function playPhysicalScannerHum() {
-            try {
-                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                
-                // Base motor drone oscillation
-                const motorOsc = audioCtx.createOscillator();
-                const motorGain = audioCtx.createGain();
-                motorOsc.type = 'sawtooth';
-                motorOsc.frequency.setValueAtTime(65, audioCtx.currentTime); 
-                
-                // Laser sweeping oscillation (higher whine)
-                const laserOsc = audioCtx.createOscillator();
-                const laserGain = audioCtx.createGain();
-                laserOsc.type = 'triangle';
-                laserOsc.frequency.setValueAtTime(450, audioCtx.currentTime);
 
-                // Filter to make it sound inside printer enclosure
-                const noiseFilter = audioCtx.createBiquadFilter();
-                noiseFilter.type = 'lowpass';
-                noiseFilter.frequency.value = 240;
 
-                // Modulate motor up and down as laser sweeps
-                motorOsc.frequency.linearRampToValueAtTime(115, audioCtx.currentTime + 0.6); // Carriage starts moving
-                motorOsc.frequency.linearRampToValueAtTime(95, audioCtx.currentTime + 1.8);  // Slow pass
-                motorOsc.frequency.linearRampToValueAtTime(50, audioCtx.currentTime + 2.3);  // Returns home
-
-                laserOsc.frequency.linearRampToValueAtTime(480, audioCtx.currentTime + 1.2);
-                laserOsc.frequency.linearRampToValueAtTime(430, audioCtx.currentTime + 2.0);
-
-                // Connect paths
-                motorOsc.connect(noiseFilter);
-                noiseFilter.connect(motorGain);
-                motorGain.connect(audioCtx.destination);
-
-                laserOsc.connect(laserGain);
-                laserGain.connect(audioCtx.destination);
-
-                // Set volumes/timing
-                motorGain.gain.setValueAtTime(0, audioCtx.currentTime);
-                motorGain.gain.linearRampToValueAtTime(0.22, audioCtx.currentTime + 0.2);
-                motorGain.gain.linearRampToValueAtTime(0.18, audioCtx.currentTime + 1.8);
-                motorGain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 2.4);
-
-                laserGain.gain.setValueAtTime(0, audioCtx.currentTime);
-                laserGain.gain.linearRampToValueAtTime(0.015, audioCtx.currentTime + 0.5);
-                laserGain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 1.8);
-                laserGain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 2.3);
-
-                motorOsc.start();
-                laserOsc.start();
-
-                motorOsc.stop(audioCtx.currentTime + 2.5);
-                laserOsc.stop(audioCtx.currentTime + 2.4);
-            } catch (err) {
-                console.warn("Mechanical Sound Engine Web Audio API disabled: ", err);
-            }
-        }
-
-        // Direct EWS Integration Utility for network printer scanner EWS (Embedded Web Server) consoles
-        btnEwsLaunch.addEventListener('click', () => {
-            const ip = printerIpInput.value.trim();
-            const device = hardwareDeviceSelect.value;
-            
-            if (!ip) {
-                triggerToast("Enter your physical printer's local network IP to connect direct WebScan.", "error");
-                document.getElementById('scanner-diagnostic-card').classList.remove('hidden');
-                return;
-            }
-
-            let endpoint = `http://${ip}`;
-            
-            // Map common printer scan URLs
-            if (device === 'hp-officejet') {
-                endpoint += `/#hpid=HpWebScanPage`;
-            } else if (device === 'epson-et') {
-                endpoint += `/PRESENTATION/HTML/TOP/INDEX.HTML`;
-            } else if (device === 'canon-pixma') {
-                endpoint += `/index.html?page=WebScan`;
-            } else if (device === 'brother-mfc') {
-                endpoint += `/general/status.html`;
-            }
-
-            triggerToast(`Attempting connection to Printer at: ${ip}`, "success");
-            
-            // Open scanner control interface in direct network window helper
-            window.open(endpoint, '_blank');
-        });
 
         function applyResponsiveLayout() {
             const isDesktop = window.innerWidth >= 768;
@@ -689,21 +493,21 @@
                 
                 // Toggle active Right Panel sub-states
                 if (currentStep === 1) {
-                    document.getElementById('desktop-idle-pane').classList.remove('hidden');
+                    desktopIdlePane.classList.remove('hidden');
                     paneCrop.classList.add('hidden');
                     paneResult.classList.add('hidden');
                 } else if (currentStep === 2) {
-                    document.getElementById('desktop-idle-pane').classList.add('hidden');
+                    desktopIdlePane.classList.add('hidden');
                     paneCrop.classList.remove('hidden');
                     paneResult.classList.add('hidden');
                 } else if (currentStep === 3) {
-                    document.getElementById('desktop-idle-pane').classList.add('hidden');
+                    desktopIdlePane.classList.add('hidden');
                     paneCrop.classList.add('hidden');
                     paneResult.classList.remove('hidden');
                 }
             } else {
                 // Mobile: Sequential Panel Stepper
-                document.getElementById('desktop-idle-pane').classList.add('hidden');
+                desktopIdlePane.classList.add('hidden');
                 
                 if (currentStep === 1) {
                     document.getElementById('left-panel').classList.remove('hidden');
@@ -736,816 +540,565 @@
                 
                 if (s.id === step) {
                     s.lbl.className = `flex items-center gap-1.5 font-bold ${s.color}`;
-                    bubble.className = `w-4 h-4 rounded-full bg-slate-900 border border-current flex items-center justify-center text-[10px]`;
+                    bubble.className = `w-4 h-4 rounded-full bg-slate-900 border border-current flex items-center justify-center text-[10px] font-bold`;
                 } else if (s.id < step) {
-                    s.lbl.className = `flex items-center gap-1.5 text-slate-500`;
-                    bubble.className = `w-4 h-4 rounded-full bg-slate-950 border border-slate-880 flex items-center justify-center text-[10px] text-slate-600`;
+                    // Completed step
+                    s.lbl.className = `flex items-center gap-1.5 font-medium text-slate-400`;
+                    bubble.className = `w-4 h-4 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-[10px] text-slate-300`;
+                    bubble.textContent = '✓';
                 } else {
-                    s.lbl.className = `flex items-center gap-1.5 text-slate-600`;
-                    bubble.className = `w-4 h-4 rounded-full bg-slate-950 border border-slate-900 flex items-center justify-center text-[10px] text-slate-700`;
+                    // Future step
+                    s.lbl.className = `flex items-center gap-1.5 font-medium text-slate-600`;
+                    bubble.className = `w-4 h-4 rounded-full bg-slate-950 border border-slate-850 flex items-center justify-center text-[10px]`;
+                    bubble.textContent = s.id;
                 }
             });
         }
 
-        function changeInputMode(source) {
-            currentTab = source;
-            paneCamera.classList.add('hidden');
-            paneUpload.classList.add('hidden');
-            paneSimulate.classList.add('hidden');
-
-            const tabButtons = [tabBtnCamera, tabBtnUpload, tabBtnSimulate];
-            tabButtons.forEach(btn => {
-                btn.className = "py-2.5 rounded-lg text-xs font-bold flex flex-col items-center gap-1.5 transition duration-200 bg-slate-950/60 border border-slate-900 text-slate-500 hover:text-slate-300";
-            });
-
-            if (source === 'camera') {
-                paneCamera.classList.remove('hidden');
-                tabBtnCamera.className = "py-2.5 rounded-lg text-xs font-bold flex flex-col items-center gap-1.5 transition duration-200 bg-blue-950/40 border border-blue-900/60 text-blue-400";
-                startVideoCamera(selectedFacingMode);
-            } else if (source === 'upload') {
-                stopVideoCamera();
-                paneUpload.classList.remove('hidden');
-                tabBtnUpload.className = "py-2.5 rounded-lg text-xs font-bold flex flex-col items-center gap-1.5 transition duration-200 bg-blue-950/40 border border-blue-900/60 text-blue-400";
-            } else if (source === 'simulate') {
-                stopVideoCamera();
-                paneSimulate.classList.remove('hidden');
-                tabBtnSimulate.className = "py-2.5 rounded-lg text-xs font-bold flex flex-col items-center gap-1.5 transition duration-200 bg-blue-950/40 border border-blue-900/60 text-blue-400";
+        // Camera Logic
+        async function startCamera() {
+            if (activeStream) {
+                stopCamera();
             }
-            applyResponsiveLayout();
-        }
+            
+            cameraStatusMsg.textContent = "Connecting to media source...";
+            btnCameraCapture.disabled = true;
 
-        tabBtnCamera.addEventListener('click', () => changeInputMode('camera'));
-        tabBtnUpload.addEventListener('click', () => changeInputMode('upload'));
-        tabBtnSimulate.addEventListener('click', () => changeInputMode('simulate'));
-
-        async function startVideoCamera(facingMode = 'environment') {
-            stopVideoCamera(); 
+            const constraints = {
+                video: {
+                    facingMode: selectedFacingMode,
+                    width: { ideal: 1920 },
+                    height: { ideal: 1080 }
+                },
+                audio: false
+            };
 
             try {
-                cameraStatusMsg.textContent = "Requesting secure lens permissions...";
-                cameraStatusMsg.className = "text-xs font-semibold text-slate-500 text-center";
-                btnCameraCapture.disabled = true;
-
-                const constraints = {
-                    video: {
-                        facingMode: facingMode,
-                        width: { ideal: 4096 }, 
-                        height: { ideal: 3072 }
-                    }
-                };
-
                 activeStream = await navigator.mediaDevices.getUserMedia(constraints);
                 videoEl.srcObject = activeStream;
-                
                 videoEl.onloadedmetadata = () => {
                     videoEl.play();
+                    cameraStatusMsg.textContent = "Secure camera feed established.";
                     btnCameraCapture.disabled = false;
-                    cameraStatusMsg.textContent = "Lens ready & calibrated.";
-                    cameraStatusMsg.className = "text-xs font-bold text-emerald-400 text-center";
                 };
-
-                const devices = await navigator.mediaDevices.enumerateDevices();
-                const videoInputs = devices.filter(d => d.kind === 'videoinput');
-                if (videoInputs.length > 1) {
-                    btnCameraSwitch.classList.remove('hidden');
-                } else {
-                    btnCameraSwitch.classList.add('hidden');
-                }
-
             } catch (err) {
-                console.error("Camera acquisition failure:", err);
-                cameraStatusMsg.textContent = "Secure camera blocked. Load local image instead.";
-                cameraStatusMsg.className = "text-xs font-bold text-red-400 text-center";
+                console.error("Camera access failed:", err);
+                cameraStatusMsg.textContent = "Access Denied. Connect camera hardware or select another tab.";
                 btnCameraCapture.disabled = true;
-                triggerToast("Secure camera blocked. Fall back to local file upload.", "error");
             }
         }
 
-        function stopVideoCamera() {
+        function stopCamera() {
             if (activeStream) {
-                const tracks = activeStream.getTracks();
-                tracks.forEach(tr => tr.stop());
-                videoEl.srcObject = null;
+                activeStream.getTracks().forEach(track => track.stop());
                 activeStream = null;
             }
+            videoEl.srcObject = null;
         }
 
         btnCameraSwitch.addEventListener('click', () => {
-            selectedFacingMode = selectedFacingMode === 'environment' ? 'user' : 'environment';
-            cameraStatusMsg.textContent = "Re-orienting active lens...";
-            startVideoCamera(selectedFacingMode);
+            selectedFacingMode = selectedFacingMode === 'user' ? 'environment' : 'user';
+            triggerToast(`Switched lens to ${selectedFacingMode === 'user' ? 'Front-facing' : 'Primary-rear'} orientation.`, "info");
+            startCamera();
         });
 
+        // Capture frame from active stream
         btnCameraCapture.addEventListener('click', () => {
-            workspaceCanvas.width = videoEl.videoWidth;
-            workspaceCanvas.height = videoEl.videoHeight;
-            const context = workspaceCanvas.getContext('2d');
-            context.drawImage(videoEl, 0, 0, workspaceCanvas.width, workspaceCanvas.height);
+            if (!activeStream || videoEl.paused) return;
+
+            const tempCanvas = document.createElement('canvas');
+            tempCanvas.width = videoEl.videoWidth;
+            tempCanvas.height = videoEl.videoHeight;
+            const ctx = tempCanvas.getContext('2d');
+            ctx.drawImage(videoEl, 0, 0, tempCanvas.width, tempCanvas.height);
             
-            const frameUrl = workspaceCanvas.toDataURL('image/jpeg');
-            launchCropperCanvas(frameUrl);
-        });
-
-        fileInput.addEventListener('change', (event) => {
-            const parsedFile = event.target.files[0];
-            if (parsedFile) {
-                const fileReader = new FileReader();
-                fileReader.onload = (e) => {
-                    launchCropperCanvas(e.target.result);
-                };
-                fileReader.readAsDataURL(parsedFile);
-            }
-        });
-
-        externalScannerInput.addEventListener('change', (event) => {
-            const parsedFile = event.target.files[0];
-            if (parsedFile) {
-                const fileReader = new FileReader();
-                fileReader.onload = (e) => {
-                    launchCropperCanvas(e.target.result);
-                };
-                fileReader.readAsDataURL(parsedFile);
-            }
-        });
-
-        function changeSimulatorTemplate(type) {
-            simulatorDocTemplate = type;
-            const buttons = [tplItemInvoice, tplItemReceipt, tplItemIdcard];
+            const capturedDataURL = tempCanvas.toDataURL('image/jpeg', 0.95);
             
-            buttons.forEach(b => {
-                b.className = "py-2 text-[11px] font-bold rounded-lg border text-center transition bg-slate-950 border-slate-850 text-slate-400";
+            // Advance to Cropping
+            stopCamera();
+            initCropWorkspace(capturedDataURL);
+        });
+
+        // Tab Switching
+        function selectSourceTab(tabName) {
+            currentTab = tabName;
+            
+            const tabs = [
+                { name: 'camera', btn: tabBtnCamera, pane: paneCamera },
+                { name: 'upload', btn: tabBtnUpload, pane: paneUpload }
+            ];
+
+            tabs.forEach(t => {
+                if (t.name === tabName) {
+                    t.btn.className = "py-2.5 rounded-lg text-xs font-bold flex flex-col items-center gap-1.5 transition duration-200 bg-slate-900 text-blue-400 border border-slate-800 shadow-sm";
+                    t.pane.classList.remove('hidden');
+                } else {
+                    t.btn.className = "py-2.5 rounded-lg text-xs font-bold flex flex-col items-center gap-1.5 transition duration-200 text-slate-400 hover:text-white";
+                    t.pane.classList.add('hidden');
+                }
             });
 
-            if (type === 'invoice') {
-                tplItemInvoice.className = "py-2 text-[11px] font-bold rounded-lg border text-center transition bg-blue-950/40 border-blue-900/60 text-blue-400";
-                paperPreview.className = "w-[48%] aspect-[1/1.4] bg-white rounded shadow-2xl border border-slate-200 relative transition-all duration-300 flex flex-col items-center justify-center p-4";
-            } else if (type === 'receipt') {
-                tplItemReceipt.className = "py-2 text-[11px] font-bold rounded-lg border text-center transition bg-blue-950/40 border-blue-900/60 text-blue-400";
-                paperPreview.className = "w-[33%] aspect-[1/2.2] bg-white rounded shadow-2xl border border-slate-200 relative transition-all duration-300 flex flex-col items-center justify-center p-4";
-            } else if (type === 'idcard') {
-                tplItemIdcard.className = "py-2 text-[11px] font-bold rounded-lg border text-center transition bg-blue-950/40 border-blue-900/60 text-blue-400";
-                paperPreview.className = "w-[62%] aspect-[1.58/1] bg-white rounded shadow-2xl border border-slate-200 relative transition-all duration-300 flex flex-col items-center justify-center p-4";
+            if (tabName === 'camera') {
+                startCamera();
+            } else {
+                stopCamera();
             }
         }
 
-        tplItemInvoice.addEventListener('click', () => changeSimulatorTemplate('invoice'));
-        tplItemReceipt.addEventListener('click', () => changeSimulatorTemplate('receipt'));
-        tplItemIdcard.addEventListener('click', () => changeSimulatorTemplate('idcard'));
+        tabBtnCamera.addEventListener('click', () => selectSourceTab('camera'));
+        tabBtnUpload.addEventListener('click', () => selectSourceTab('upload'));
 
-        function drawSynthesizedDoc(type) {
-            const renderCanvas = document.createElement('canvas');
-            
-            if (type === 'invoice') {
-                renderCanvas.width = 1240;
-                renderCanvas.height = 1754; 
-            } else if (type === 'receipt') {
-                renderCanvas.width = 800;
-                renderCanvas.height = 1800;
-            } else if (type === 'idcard') {
-                renderCanvas.width = 1012;
-                renderCanvas.height = 638; 
-            }
-
-            const ctx = renderCanvas.getContext('2d');
-            ctx.fillStyle = '#fcfcfa';
-            ctx.fillRect(0, 0, renderCanvas.width, renderCanvas.height);
-            
-            ctx.fillStyle = 'rgba(0,0,0,0.025)';
-            for (let index = 0; index < 450; index++) {
-                ctx.fillRect(Math.random() * renderCanvas.width, Math.random() * renderCanvas.height, 2.5, 2.5);
-            }
-
-            ctx.strokeStyle = '#e2e8f0';
-            ctx.lineWidth = 16;
-            ctx.strokeRect(0, 0, renderCanvas.width, renderCanvas.height);
-
-            if (type === 'invoice') {
-                ctx.fillStyle = '#0f172a';
-                ctx.font = 'bold 50px sans-serif';
-                ctx.fillText("ENTERPRISE LEVEL CONTRACT", 100, 160);
-
-                ctx.fillStyle = '#64748b';
-                ctx.font = '24px sans-serif';
-                ctx.fillText("DOCUMENT REFERENCE: #SC-2026-90482", 100, 210);
-
-                ctx.strokeStyle = '#0284c7';
-                ctx.lineWidth = 6;
-                ctx.beginPath(); ctx.moveTo(100, 250); ctx.lineTo(1140, 250); ctx.stroke();
-
-                ctx.fillStyle = '#1e293b';
-                ctx.font = 'bold 30px sans-serif';
-                ctx.fillText("PARTIES TO AGREEMENT:", 100, 320);
-                
-                ctx.font = '26px sans-serif';
-                ctx.fillStyle = '#475569';
-                ctx.fillText("1. FIRST PARTY: Cloud Architecture Systems Ltd. (Licensor)", 100, 375);
-                ctx.fillText("2. SECOND PARTY: Global Communications Network, Inc. (Licensee)", 100, 420);
-
-                ctx.fillStyle = '#1e293b';
-                ctx.font = 'bold 30px sans-serif';
-                ctx.fillText("TERMS & PROVISIONS:", 100, 500);
-
-                ctx.font = '24px sans-serif';
-                ctx.fillStyle = '#475569';
-                const paragraphs = [
-                    "A. The Licensor agrees to grant an exclusive license to the software modules described",
-                    "   in Schedule A (the 'Licensed Software') to the Licensee subject to recurring payments.",
-                    "B. Licensee shall implement industry standard security configurations and audit protocols",
-                    "   as specified under Section 9 of the Federal Compliance Guideline Standards.",
-                    "C. Payments of $14,500.00 USD shall be processed quarterly by the authorized payment gateway."
-                ];
-                
-                let yCoordinate = 550;
-                paragraphs.forEach(line => {
-                    ctx.fillText(line, 100, yCoordinate);
-                    yCoordinate += 45;
-                });
-
-                ctx.fillStyle = '#1e293b';
-                ctx.font = 'bold 28px sans-serif';
-                ctx.fillText("IN WITNESS WHEREOF, the parties authorize execution below:", 100, yCoordinate + 80);
-
-                ctx.strokeStyle = '#94a3b8';
-                ctx.lineWidth = 2.5;
-                ctx.beginPath(); ctx.moveTo(100, yCoordinate + 240); ctx.lineTo(450, yCoordinate + 240); ctx.stroke();
-                ctx.beginPath(); ctx.moveTo(690, yCoordinate + 240); ctx.lineTo(1040, yCoordinate + 240); ctx.stroke();
-
-                ctx.fillStyle = '#475569';
-                ctx.font = '24px sans-serif';
-                ctx.fillText("Authorized Representative (Licensor)", 100, yCoordinate + 280);
-                ctx.fillText("Authorized Signee (Licensee)", 690, yCoordinate + 280);
-
-                ctx.strokeStyle = '#1d4ed8';
-                ctx.lineWidth = 4;
-                ctx.beginPath();
-                ctx.moveTo(150, yCoordinate + 210);
-                ctx.bezierCurveTo(200, yCoordinate + 170, 240, yCoordinate + 230, 300, yCoordinate + 180);
-                ctx.bezierCurveTo(320, yCoordinate + 160, 350, yCoordinate + 210, 400, yCoordinate + 190);
-                ctx.stroke();
-
-                ctx.strokeStyle = '#2563eb';
-                ctx.beginPath();
-                ctx.moveTo(740, yCoordinate + 200);
-                ctx.bezierCurveTo(790, yCoordinate + 220, 830, yCoordinate + 160, 880, yCoordinate + 210);
-                ctx.bezierCurveTo(920, yCoordinate + 210, 960, yCoordinate + 180, 1010, yCoordinate + 200);
-                ctx.stroke();
-
-            } else if (type === 'receipt') {
-                ctx.fillStyle = '#1e293b';
-                ctx.textAlign = 'center';
-                ctx.font = 'bold 36px monospace';
-                ctx.fillText("SUPERMART EXPRESS #4928", 400, 120);
-                ctx.font = '24px monospace';
-                ctx.fillText("384 INDUSTRIAL PARKWAY, CA", 400, 170);
-                ctx.fillText("TEL: (415) 555-0182", 400, 215);
-                
-                ctx.textAlign = 'left';
-                ctx.fillText("--------------------------------------", 80, 270);
-                ctx.fillText("TICKET: #940294   DATE: May 21, 2026", 80, 320);
-                ctx.fillText("CASHIER: MAX R.   TIME: 10:48 AM", 80, 365);
-                ctx.fillText("--------------------------------------", 80, 410);
-
-                const items = [
-                    { name: "01. ULTRA SSD DRIVE 2TB", price: "249.99" },
-                    { name: "02. COMPACT HUB ADAPTER", price: "45.50" },
-                    { name: "03. TYPE-C NYLON TRUNK CABLE 3M", price: "18.25" },
-                    { name: "04. COFFEE BEANS - ROASTED", price: "12.99" },
-                    { name: "05. ERGONOMIC KEYBOARD CASE", price: "89.00" }
-                ];
-
-                let yCoord = 470;
-                ctx.font = '22px monospace';
-                items.forEach(it => {
-                    ctx.fillText(it.name, 80, yCoord);
-                    ctx.textAlign = 'right';
-                    ctx.fillText(it.price, 720, yCoord);
-                    ctx.textAlign = 'left';
-                    yCoord += 55;
-                });
-
-                ctx.fillText("--------------------------------------", 80, yCoord + 20);
-                
-                ctx.font = 'bold 26px monospace';
-                ctx.fillText("SUBTOTAL:", 80, yCoord + 75);
-                ctx.textAlign = 'right';
-                ctx.fillText("$415.73", 720, yCoord + 75);
-                
-                ctx.textAlign = 'left';
-                ctx.font = '22px monospace';
-                ctx.fillText("TAX (8.5%):", 80, yCoord + 125);
-                ctx.textAlign = 'right';
-                ctx.fillText("$35.34", 720, yCoord + 125);
-
-                ctx.textAlign = 'left';
-                ctx.font = 'bold 32px monospace';
-                ctx.fillText("TOTAL COMP:", 80, yCoord + 195);
-                ctx.textAlign = 'right';
-                ctx.fillText("$451.07", 720, yCoord + 195);
-
-                ctx.textAlign = 'center';
-                ctx.font = 'bold 22px monospace';
-                ctx.fillText("THANK YOU FOR YOUR PATRONAGE!", 400, yCoord + 300);
-                
-                ctx.fillStyle = '#000000';
-                for (let step = 180; step < 620; step += Math.random() > 0.4 ? 10 : 16) {
-                    ctx.fillRect(step, yCoord + 340, Math.random() * 8 + 3, 75);
-                }
-
-            } else if (type === 'idcard') {
-                ctx.fillStyle = '#0f172a';
-                ctx.fillRect(20, 20, 972, 105);
-
-                ctx.fillStyle = '#f8fafc';
-                ctx.font = 'bold 36px sans-serif';
-                ctx.fillText("GLOBAL RESIDENCY PASS", 60, 85);
-
-                ctx.strokeStyle = '#cbd5e1';
-                ctx.lineWidth = 4;
-                ctx.strokeRect(60, 175, 230, 290);
-                
-                ctx.fillStyle = '#e2e8f0';
-                ctx.fillRect(62, 177, 226, 286);
-                
-                ctx.fillStyle = '#94a3b8';
-                ctx.beginPath();
-                ctx.arc(175, 290, 50, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.beginPath();
-                ctx.arc(175, 430, 90, Math.PI, 0);
-                ctx.fill();
-
-                ctx.fillStyle = '#1e293b';
-                ctx.font = 'bold 30px sans-serif';
-                ctx.fillText("SURNAME:  RICHARDSON", 340, 230);
-                ctx.fillText("GIVEN:    SARAH JANE", 340, 285);
-                ctx.fillText("PASS NO:  GRP-2948201-X", 340, 340);
-                ctx.fillText("ROLE:     SENIOR RESEARCH LEAD", 340, 395);
-                ctx.fillText("EXPIRES:  31 DEC 2030", 340, 450);
-
-                ctx.fillStyle = 'rgba(217, 119, 6, 0.2)';
-                ctx.beginPath();
-                ctx.arc(830, 340, 110, 0, Math.PI*2);
-                ctx.fill();
-                ctx.strokeStyle = 'rgba(217, 119, 6, 0.5)';
-                ctx.lineWidth = 3;
-                ctx.stroke();
-
-                ctx.fillStyle = '#b45309';
-                ctx.font = 'bold 18px monospace';
-                ctx.fillText("AUTHENTIC SECURE", 745, 345);
-            }
-
-            return renderCanvas.toDataURL('image/jpeg');
-        }
-
-        btnSimulateTrigger.addEventListener('click', () => {
-            btnSimulateTrigger.disabled = true;
-            simLaserBar.classList.remove('hidden');
-
-            // Play the synchronized sound synthesis whirr
-            playPhysicalScannerHum();
-
-            setTimeout(() => {
-                simLaserBar.classList.add('hidden');
-                btnSimulateTrigger.disabled = false;
-                
-                const synthesizedData = drawSynthesizedDoc(simulatorDocTemplate);
-                launchCropperCanvas(synthesizedData);
-                
-                triggerToast("Procedural document generated & scanned!", "success");
-            }, 2400);
+        // File upload setup
+        dropZone.addEventListener('click', () => fileInput.click());
+        
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('border-slate-800');
+            dropZone.classList.add('border-blue-500', 'bg-blue-950/20');
         });
 
-        function launchCropperCanvas(imageSrc) {
-            stopVideoCamera();
-            
-            currentStep = 2; // Move to Step 2: Crop
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('border-blue-500', 'bg-blue-950/20');
+            dropZone.classList.add('border-slate-800');
+        });
 
-            imageWorkspace.src = imageSrc;
-            
-            if (activeCropper) {
-                activeCropper.destroy();
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('border-blue-500', 'bg-blue-950/20');
+            dropZone.classList.add('border-slate-800');
+
+            if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+                handleFileSelection(e.dataTransfer.files[0]);
+            }
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files && e.target.files.length > 0) {
+                handleFileSelection(e.target.files[0]);
+            }
+        });
+
+        function handleFileSelection(file) {
+            if (!file.type.startsWith('image/')) {
+                triggerToast("Selected file must be a valid image snapshot.", "error");
+                return;
             }
 
-            applyResponsiveLayout();
-
-            setTimeout(() => {
-                activeCropper = new Cropper(imageWorkspace, {
-                    viewMode: 2, 
-                    dragMode: 'move',
-                    autoCropArea: 0.95,
-                    restore: false,
-                    guides: true,
-                    center: true,
-                    highlight: false,
-                    cropBoxMovable: true,
-                    cropBoxResizable: true,
-                    toggleDragModeOnDblclick: false,
-                });
-            }, 120);
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                initCropWorkspace(event.target.result);
+            };
+            reader.readAsDataURL(file);
         }
 
-        btnCropCancel.addEventListener('click', () => {
+
+
+
+        // STATE 2: Crop Workbench Controller
+        function initCropWorkspace(imageSrc) {
+            currentStep = 2;
+            applyResponsiveLayout();
+            
+            // Load source image
+            uncroppedImageSource = imageSrc;
+            imageWorkspace.src = imageSrc;
+
+            // Destroy existing cropper if exists
             if (activeCropper) {
                 activeCropper.destroy();
                 activeCropper = null;
             }
-            fileInput.value = '';
-            externalScannerInput.value = '';
-            currentStep = 1; // Back to Step 1: Source Selection
-            changeInputMode(currentTab);
+
+            // Initialize CropperJS with custom rules
+            activeCropper = new Cropper(imageWorkspace, {
+                viewMode: 1,
+                dragMode: 'move',
+                responsive: true,
+                restore: false,
+                guides: true,
+                center: true,
+                highlight: false,
+                background: false,
+                cropBoxMovable: true,
+                cropBoxResizable: true,
+                toggleDragModeOnDblclick: false,
+                autoCropArea: 0.85
+            });
+            
+            triggerToast("Loaded successfully. Align the document corners and crop.", "info");
+        }
+
+        btnCropCancel.addEventListener('click', () => {
+            currentStep = 1;
+            applyResponsiveLayout();
+            if (currentTab === 'camera') {
+                startCamera();
+            }
+            triggerToast("Cropping session discarded.", "info");
         });
 
-        btnCropConfirm.addEventListener('click', async () => {
+        btnCropConfirm.addEventListener('click', () => {
             if (!activeCropper) return;
 
-            currentStep = 3; // Forward to Step 3: Result Rendering
+            // Generate high res cropped canvas
+            const croppedCanvas = activeCropper.getCroppedCanvas({
+                imageSmoothingEnabled: true,
+                imageSmoothingQuality: 'high'
+            });
+
+            currentStep = 3;
             applyResponsiveLayout();
 
+            // Render Loading Spinner
             resLoadingCard.classList.remove('hidden');
-            resPreviewCard.add('hidden');
+            resPreviewCard.classList.add('hidden');
             resActionPanel.classList.add('hidden');
-            resStatusTitle.textContent = "Analyzing scanned pixels...";
 
-            uncroppedImageSource = activeCropper.getCroppedCanvas({
-                maxWidth: 2500, 
-                maxHeight: 2500
-            });
-
-            if (!uncroppedImageSource) {
-                triggerToast("Crop coordinate computation failure.", "error");
-                return;
-            }
-
-            currentActiveFilter = 'orig'; 
-            resetFilterSelectionUI();
-            await processAndScaleImagePipeline();
+            setTimeout(() => {
+                applyDocumentMatrixFilter(croppedCanvas);
+            }, 800);
         });
 
-        function modifyImagePixels(baseCanvas, filter) {
-            const tempCanvas = document.createElement('canvas');
-            tempCanvas.width = baseCanvas.width;
-            tempCanvas.height = baseCanvas.height;
-            const context = tempCanvas.getContext('2d');
-            context.drawImage(baseCanvas, 0, 0);
 
-            if (filter === 'orig') return tempCanvas;
+        // STATE 3: Image Processing Matrix filters
+        function applyDocumentMatrixFilter(sourceCanvas) {
+            const ctx = workspaceCanvas.getContext('2d');
+            workspaceCanvas.width = sourceCanvas.width;
+            workspaceCanvas.height = sourceCanvas.height;
+            
+            // Draw original cropped crop
+            ctx.drawImage(sourceCanvas, 0, 0);
 
-            const imageData = context.getImageData(0, 0, tempCanvas.width, tempCanvas.height);
-            const rawBytes = imageData.data;
+            if (currentActiveFilter === 'scan') {
+                // Bleach sheet background and boost print text contrast
+                resStatusTitle.textContent = "Bleaching Sheet Background...";
+                resStatusSubtitle.textContent = "Removing ambient light noise";
 
-            for (let i = 0; i < rawBytes.length; i += 4) {
-                const redVal = rawBytes[i];
-                const greenVal = rawBytes[i + 1];
-                const blueVal = rawBytes[i + 2];
+                const imgData = ctx.getImageData(0, 0, workspaceCanvas.width, workspaceCanvas.height);
+                const data = imgData.data;
 
-                const luma = 0.299 * redVal + 0.587 * greenVal + 0.114 * blueVal;
+                // Threshold contrast filter for high legibility
+                for (let i = 0; i < data.length; i += 4) {
+                    let r = data[i];
+                    let g = data[i+1];
+                    let b = data[i+2];
+                    
+                    // Grayscale intensity weight formula
+                    let intensity = 0.299 * r + 0.587 * g + 0.114 * b;
 
-                if (filter === 'gray') {
-                    rawBytes[i] = luma;     
-                    rawBytes[i + 1] = luma; 
-                    rawBytes[i + 2] = luma; 
-                } 
-                else if (filter === 'scan') {
-                    let value = luma;
-                    if (value > 125) {
-                        value = Math.min(255, value * 1.3); 
+                    if (intensity > 135) {
+                        // Whiten background directly (removes scanner foldings/dirt)
+                        data[i] = Math.min(255, r * 1.35);
+                        data[i+1] = Math.min(255, g * 1.35);
+                        data[i+2] = Math.min(255, b * 1.35);
                     } else {
-                        value = Math.max(0, value * 0.75);  
+                        // Deep darken printing inks/lines
+                        data[i] = Math.max(0, r * 0.65);
+                        data[i+1] = Math.max(0, g * 0.65);
+                        data[i+2] = Math.max(0, b * 0.65);
                     }
-                    rawBytes[i] = value;
-                    rawBytes[i + 1] = value;
-                    rawBytes[i + 2] = value;
                 }
-                else if (filter === 'blue') {
-                    rawBytes[i] = Math.max(0, luma - 100);       
-                    rawBytes[i + 1] = Math.max(0, luma - 20);    
-                    rawBytes[i + 2] = Math.min(255, luma + 90);  
+                ctx.putImageData(imgData, 0, 0);
+
+            } else if (currentActiveFilter === 'gray') {
+                // High contrast Monochrome Grayscale
+                resStatusTitle.textContent = "Converting to Grayscale...";
+                resStatusSubtitle.textContent = "Dumping color channels";
+
+                const imgData = ctx.getImageData(0, 0, workspaceCanvas.width, workspaceCanvas.height);
+                const data = imgData.data;
+
+                for (let i = 0; i < data.length; i += 4) {
+                    let r = data[i];
+                    let g = data[i+1];
+                    let b = data[i+2];
+                    
+                    let gray = 0.299 * r + 0.587 * g + 0.114 * b;
+                    
+                    // Slightly increase contrast
+                    let contrastGray = gray > 128 ? Math.min(255, gray * 1.1) : Math.max(0, gray * 0.9);
+
+                    data[i] = contrastGray;
+                    data[i+1] = contrastGray;
+                    data[i+2] = contrastGray;
                 }
+                ctx.putImageData(imgData, 0, 0);
+
+            } else if (currentActiveFilter === 'blue') {
+                // Architectural Engineering Draft Blueprint
+                resStatusTitle.textContent = "Drafting Blueprint Style...";
+                resStatusSubtitle.textContent = "Inverting color matrix";
+
+                const imgData = ctx.getImageData(0, 0, workspaceCanvas.width, workspaceCanvas.height);
+                const data = imgData.data;
+
+                for (let i = 0; i < data.length; i += 4) {
+                    let r = data[i];
+                    let g = data[i+1];
+                    let b = data[i+2];
+                    
+                    let intensity = 0.299 * r + 0.587 * g + 0.114 * b;
+
+                    if (intensity < 125) {
+                        // Drawing strokes turn bright cyan/white
+                        data[i] = 135; // Cyan
+                        data[i+1] = 230;
+                        data[i+2] = 255;
+                    } else {
+                        // Document background turns deep cobalt blueprint blue
+                        data[i] = 11; 
+                        data[i+1] = 30;
+                        data[i+2] = 73;
+                    }
+                }
+                ctx.putImageData(imgData, 0, 0);
             }
 
-            context.putImageData(imageData, 0, 0);
-            return tempCanvas;
+            // Begin real-time adaptive quality calibration to ensure file is under 300KB
+            resStatusTitle.textContent = "Optimizing File Weight...";
+            resStatusSubtitle.textContent = "Targeting <300KB Quality matrix";
+            
+            calibrateAdaptiveCompression(workspaceCanvas);
         }
 
-        filterBtnOrig.addEventListener('click', () => selectNewFilterLayer('orig'));
-        filterBtnScan.addEventListener('click', () => selectNewFilterLayer('scan'));
-        filterBtnGray.addEventListener('click', () => selectNewFilterLayer('gray'));
-        filterBtnBlue.addEventListener('click', () => selectNewFilterLayer('blue'));
+        // Search algorithm adjusting quality bounds dynamically to guarantee sub-300KB weight
+        function calibrateAdaptiveCompression(canvasEl) {
+            let quality = 0.95;
+            let iterations = 0;
 
-        function selectNewFilterLayer(filter) {
-            if (currentActiveFilter === filter) return;
-            currentActiveFilter = filter;
-            resetFilterSelectionUI();
-            processAndScaleImagePipeline();
+            function runCompressionPass() {
+                canvasEl.toBlob((blob) => {
+                    if (!blob) {
+                        resLoadingCard.classList.add('hidden');
+                        triggerToast("Canvas compression buffer failure.", "error");
+                        return;
+                    }
+
+                    const size = blob.size;
+                    processedBlob = blob;
+
+                    const kb = size / 1024;
+                    targetKbDisplay.textContent = `${kb.toFixed(2)} KB / 300 KB`;
+                    
+                    const ratio = Math.min(100, (size / APP_LIMIT_BYTES) * 100);
+                    compGaugeBar.style.width = `${ratio}%`;
+
+                    if (ratio > 100) {
+                        compGaugeBar.className = "bg-rose-500 h-1.5 rounded-full transition-all duration-300";
+                    } else {
+                        compGaugeBar.className = "bg-emerald-500 h-1.5 rounded-full transition-all duration-300";
+                    }
+
+                    if (size > APP_LIMIT_BYTES && quality > 0.15 && iterations < 8) {
+                        quality -= 0.12; // lower compression index
+                        iterations++;
+                        runCompressionPass();
+                    } else {
+                        // Finished calibration
+                        if (resRenderImg.src) {
+                            URL.revokeObjectURL(resRenderImg.src);
+                        }
+                        resRenderImg.src = URL.createObjectURL(blob);
+
+                        resLoadingCard.classList.add('hidden');
+                        resPreviewCard.classList.remove('hidden');
+                        resActionPanel.classList.remove('hidden');
+
+                        if (size > APP_LIMIT_BYTES) {
+                            triggerToast("Warning: File exceeds 300KB at maximum possible compression.", "error");
+                        } else {
+                            triggerToast(`Auto-fit Complete: Output calibrated to ${kb.toFixed(1)} KB (Legibility index: high)`, "success");
+                        }
+                    }
+                }, 'image/jpeg', quality);
+            }
+
+            runCompressionPass();
         }
 
-        function resetFilterSelectionUI() {
-            const configurations = [
-                { name: 'orig', el: filterBtnOrig },
-                { name: 'scan', el: filterBtnScan },
-                { name: 'gray', el: filterBtnGray },
-                { name: 'blue', el: filterBtnBlue }
+        // Filter button toggle helpers
+        function selectActiveFilter(filterName) {
+            currentActiveFilter = filterName;
+            
+            const filterBtns = [
+                { name: 'orig', btn: filterBtnOrig },
+                { name: 'scan', btn: filterBtnScan },
+                { name: 'gray', btn: filterBtnGray },
+                { name: 'blue', btn: filterBtnBlue }
             ];
 
-            configurations.forEach(cfg => {
-                if (cfg.name === currentActiveFilter) {
-                    cfg.el.className = "py-1.5 text-[10px] font-bold rounded-lg transition bg-blue-600 text-white shadow-md shadow-blue-500/10";
+            filterBtns.forEach(f => {
+                if (f.name === filterName) {
+                    f.btn.className = "py-1.5 text-[10px] font-bold rounded-lg transition bg-slate-900 text-blue-400 border border-slate-800 shadow-sm";
                 } else {
-                    cfg.el.className = "py-1.5 text-[10px] font-bold rounded-lg transition bg-slate-900 border border-slate-850 text-slate-400 hover:text-slate-200";
+                    f.btn.className = "py-1.5 text-[10px] font-bold rounded-lg transition text-slate-400 hover:text-white";
                 }
             });
-        }
 
-        async function processAndScaleImagePipeline() {
+            if (!activeCropper) return;
+
+            // Re-apply filters using cached cropped canvas
             resLoadingCard.classList.remove('hidden');
-            resStatusTitle.textContent = "Calibrating document resolution...";
-            resStatusSubtitle.textContent = "Adjusting canvas parameters to auto-fit target weight.";
+            resPreviewCard.classList.add('hidden');
+            resActionPanel.classList.add('hidden');
 
-            try {
-                const styledCanvas = modifyImagePixels(uncroppedImageSource, currentActiveFilter);
-                
-                resStatusTitle.textContent = "Compressing directly to under 300KB...";
-                const outputBlob = await fitImageScaleToTargetBytes(styledCanvas, APP_LIMIT_BYTES);
-                
-                processedBlob = outputBlob;
-                
-                const dataUrl = URL.createObjectURL(outputBlob);
-                resRenderImg.src = dataUrl;
-                
-                const verifiedKB = (outputBlob.size / 1024).toFixed(2);
-                targetKbDisplay.textContent = `${verifiedKB} KB / 300 KB`;
-                
-                const percentCap = Math.min(100, (outputBlob.size / APP_LIMIT_BYTES) * 100);
-                compGaugeBar.style.width = `${percentCap}%`;
-
-                if (outputBlob.size > APP_LIMIT_BYTES) {
-                    compGaugeBar.className = "bg-amber-500 h-1.5 rounded-full transition-all duration-300";
-                    targetKbDisplay.className = "font-mono-code text-amber-400";
-                    triggerToast("Max threshold reached. Quality compressed at safest limits.", "info");
-                } else {
-                    compGaugeBar.className = "bg-emerald-500 h-1.5 rounded-full transition-all duration-300";
-                    targetKbDisplay.className = "font-mono-code text-emerald-400";
-                }
-
-                resLoadingCard.classList.add('hidden');
-                resPreviewCard.classList.remove('hidden');
-                resActionPanel.classList.remove('hidden');
-
-            } catch (error) {
-                console.error("Compression Pipeline failure: ", error);
-                resStatusTitle.textContent = "Compression Exception Encountered.";
-                resStatusSubtitle.textContent = "Decrease image dimensions to prevent canvas memory leaks.";
-                triggerToast("System error during image processing.", "error");
-            }
-        }
-
-        function calculateBlobFromCanvas(canvas, type, compressionRatio) {
-            return new Promise((res) => {
-                canvas.toBlob((b) => {
-                    res(b);
-                }, type, compressionRatio);
+            const croppedCanvas = activeCropper.getCroppedCanvas({
+                imageSmoothingEnabled: true,
+                imageSmoothingQuality: 'high'
             });
+
+            setTimeout(() => {
+                applyDocumentMatrixFilter(croppedCanvas);
+            }, 500);
         }
 
-        async function fitImageScaleToTargetBytes(canvas, maxAllowedBytes) {
-            let compressionRatio = 0.95;
-            const absoluteMinRatio = 0.15;
-            const degradationStep = 0.08;
-            
-            let evaluatedBlob = await calculateBlobFromCanvas(canvas, 'image/jpeg', compressionRatio);
-            
-            while (evaluatedBlob.size > maxAllowedBytes && compressionRatio > absoluteMinRatio) {
-                compressionRatio -= degradationStep;
-                evaluatedBlob = await calculateBlobFromCanvas(canvas, 'image/jpeg', compressionRatio);
+        filterBtnOrig.addEventListener('click', () => selectActiveFilter('orig'));
+        filterBtnScan.addEventListener('click', () => selectActiveFilter('scan'));
+        filterBtnGray.addEventListener('click', () => selectActiveFilter('gray'));
+        filterBtnBlue.addEventListener('click', () => selectActiveFilter('blue'));
+
+        // Reset workspace to scan new page
+        btnResultReset.addEventListener('click', () => {
+            currentStep = 1;
+            applyResponsiveLayout();
+            if (currentTab === 'camera') {
+                startCamera();
             }
+            triggerToast("Ready to process new document page.", "info");
+        });
 
-            if (evaluatedBlob.size > maxAllowedBytes) {
-                let scalingFactor = 0.85;
-                let internalCanvas = canvas;
-                
-                while (evaluatedBlob.size > maxAllowedBytes && scalingFactor > 0.25) {
-                    const scaledWidth = Math.floor(internalCanvas.width * scalingFactor);
-                    const scaledHeight = Math.floor(internalCanvas.height * scalingFactor);
+
+        // EXPORT DASHBOARD OPERATIONS
+        btnSavePdf.addEventListener('click', () => {
+            if (!processedBlob) return;
+
+            const { jsPDF } = window.jspdf;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = new Image();
+                img.src = e.target.result;
+                img.onload = () => {
+                    // Determine orientation based on aspect ratio
+                    const isLandscape = img.width > img.height;
                     
-                    const shrinkCanvas = document.createElement('canvas');
-                    shrinkCanvas.width = scaledWidth;
-                    shrinkCanvas.height = scaledHeight;
-                    const ctx = shrinkCanvas.getContext('2d');
-                    ctx.drawImage(internalCanvas, 0, 0, scaledWidth, scaledHeight);
-                    
-                    evaluatedBlob = await calculateBlobFromCanvas(shrinkCanvas, 'image/jpeg', 0.65);
-                    internalCanvas = shrinkCanvas;
-                    scalingFactor -= 0.1;
-                }
-            }
-            return evaluatedBlob;
-        }
+                    const doc = new jsPDF({
+                        orientation: isLandscape ? 'landscape' : 'portrait',
+                        unit: 'px',
+                        format: 'a4'
+                    });
 
-        async function buildPdfDocument() {
-            return new Promise((resolve, reject) => {
-                if (!processedBlob) {
-                    reject("No binary data to write.");
-                    return;
-                }
+                    const pdfWidth = doc.internal.pageSize.getWidth();
+                    const pdfHeight = doc.internal.pageSize.getHeight();
 
-                const reader = new FileReader();
-                reader.readAsDataURL(processedBlob);
-                
-                reader.onloadend = () => {
-                    try {
-                        const base64Data = reader.result;
-                        const { jsPDF } = window.jspdf;
-                        
-                        const finalPdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+                    // Calculate aspect ratio to fit within A4 without stretching or bulging
+                    const imgRatio = img.width / img.height;
+                    const pdfRatio = pdfWidth / pdfHeight;
 
-                        const widthBoundary = finalPdf.internal.pageSize.getWidth();
-                        const heightBoundary = finalPdf.internal.pageSize.getHeight();
-                        
-                        const tempImg = new Image();
-                        tempImg.onload = () => {
-                            let fileName = inputExportFilename.value.trim();
-                            if (!fileName) fileName = 'Scanned_Document';
+                    let printWidth, printHeight;
+                    let x = 0;
+                    let y = 0;
 
-                            const imageRatio = tempImg.width / tempImg.height;
-                            const pdfRatio = widthBoundary / heightBoundary;
-                            
-                            let scaledW = widthBoundary;
-                            let scaledH = heightBoundary;
-                            let drawX = 0;
-                            let drawY = 0;
-
-                            if (imageRatio > pdfRatio) {
-                                scaledH = widthBoundary / imageRatio;
-                                drawY = (heightBoundary - scaledH) / 2; 
-                            } else {
-                                scaledW = heightBoundary * imageRatio;
-                                drawX = (widthBoundary - scaledW) / 2; 
-                            }
-
-                            finalPdf.addImage(base64Data, 'JPEG', drawX, drawY, scaledW, scaledH);
-                            resolve({ finalPdf, fileName });
-                        };
-                        tempImg.src = base64Data;
-                    } catch (err) {
-                        reject(err);
+                    if (imgRatio > pdfRatio) {
+                        // Image is wider than the PDF page aspect ratio
+                        printWidth = pdfWidth;
+                        printHeight = pdfWidth / imgRatio;
+                        y = (pdfHeight - printHeight) / 2;
+                    } else {
+                        // Image is taller than the PDF page aspect ratio
+                        printHeight = pdfHeight;
+                        printWidth = pdfHeight * imgRatio;
+                        x = (pdfWidth - printWidth) / 2;
                     }
+
+                    // Render optimized JPEG direct onto PDF preserving aspect ratio
+                    doc.addImage(e.target.result, 'JPEG', x, y, printWidth, printHeight, undefined, 'FAST');
+                    const name = inputExportFilename.value.trim() || 'Scanned_Document';
+                    doc.save(`${name}.pdf`);
+                    triggerToast(`PDF downloaded: ${name}.pdf`, "success");
                 };
-            });
-        }
-
-        btnSavePdf.addEventListener('click', async () => {
-            const originalButtonText = btnSavePdf.innerHTML;
-            btnSavePdf.innerHTML = '<div class="loader-ring" style="width:14px; height:14px; border-width:2px; display:inline-block; vertical-align:middle; margin-right:5px;"></div> Exporting...';
-            btnSavePdf.disabled = true;
-
-            try {
-                const { finalPdf, fileName } = await buildPdfDocument();
-                finalPdf.save(`${fileName}.pdf`);
-                triggerToast("Optimal PDF document downloaded successfully!", "success");
-            } catch (error) {
-                console.error("PDF generation failure: ", error);
-                triggerToast("PDF compilation error.", "error");
-            } finally {
-                btnSavePdf.innerHTML = originalButtonText;
-                btnSavePdf.disabled = false;
-            }
+            };
+            reader.readAsDataURL(processedBlob);
         });
 
         btnSaveImage.addEventListener('click', () => {
             if (!processedBlob) return;
-            
-            let fileName = inputExportFilename.value.trim();
-            if (!fileName) fileName = 'Scanned_Document';
 
-            const localLink = document.createElement('a');
-            localLink.href = URL.createObjectURL(processedBlob);
-            localLink.download = `${fileName}.jpg`;
-            document.body.appendChild(localLink);
-            localLink.click();
-            document.body.removeChild(localLink);
+            const name = inputExportFilename.value.trim() || 'Scanned_Document';
+            const link = document.createElement('a');
+            link.download = `${name}.jpg`;
+            link.href = URL.createObjectURL(processedBlob);
+            link.click();
             
-            triggerToast("Document saved as high-contrast image!", "success");
+            triggerToast(`Image downloaded: ${name}.jpg`, "success");
         });
 
-        // Ink-saving Printer Output utility optimized for external USB / AirPrint printers
         btnPrintDoc.addEventListener('click', () => {
-            if (!processedBlob) {
-                triggerToast("No processed document available to print.", "error");
-                return;
-            }
+            if (!resRenderImg.src) return;
 
-            const docBlobUrl = URL.createObjectURL(processedBlob);
-            const printFrame = document.createElement('iframe');
-            printFrame.style.position = 'fixed';
-            printFrame.style.right = '0';
-            printFrame.style.bottom = '0';
-            printFrame.style.width = '0';
-            printFrame.style.height = '0';
-            printFrame.style.border = '0';
-            document.body.appendChild(printFrame);
-            
-            printFrame.onload = () => {
-                setTimeout(() => {
-                    printFrame.contentWindow.focus();
-                    printFrame.contentWindow.print();
-                    setTimeout(() => {
-                        document.body.removeChild(printFrame);
-                    }, 1500);
-                }, 500);
-            };
-            
-            // Layout structured perfectly to run cleanly on A4 printers without dark styling ink-waste
-            const htmlContent = `
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(`
                 <!DOCTYPE html>
                 <html>
                 <head>
-                    <title>Print Document - DocScanner Pro</title>
+                    <title>Print Scanned Document</title>
                     <style>
-                        @page {
-                            size: A4 portrait;
-                            margin: 10mm;
-                        }
                         body {
                             margin: 0;
                             display: flex;
                             align-items: center;
                             justify-content: center;
                             height: 100vh;
-                            background-color: #ffffff;
+                            background: white;
                         }
                         img {
                             max-width: 100%;
                             max-height: 100%;
                             object-fit: contain;
                         }
+                        @media print {
+                            body { background: white; }
+                            @page { size: auto; margin: 0; }
+                        }
                     </style>
                 </head>
-                <body>
-                    <img src="${docBlobUrl}" />
+                <body onload="window.print(); setTimeout(window.close, 500);">
+                    <img src="${resRenderImg.src}" />
                 </body>
                 </html>
-            `;
-            printFrame.contentDocument.write(htmlContent);
-            printFrame.contentDocument.close();
+            `);
+            printWindow.document.close();
+            triggerToast("Sending scanned file to active Brother printer layout...", "info");
         });
 
-        btnShareTrigger.addEventListener('click', async () => {
-            const originalButtonText = btnShareTrigger.innerHTML;
-            btnShareTrigger.innerHTML = '<div class="loader-ring" style="width:14px; height:14px; border-width:2px; display:inline-block; vertical-align:middle; margin-right:5px;"></div> Preparing...';
-            btnShareTrigger.disabled = true;
+        btnShareTrigger.addEventListener('click', () => {
+            if (!processedBlob) return;
 
-            try {
-                const { finalPdf, fileName } = await buildPdfDocument();
-                const binaryPDF = finalPdf.output('blob');
-                const parsedFileObj = new File([binaryPDF], `${fileName}.pdf`, { type: 'application/pdf' });
-                
-                if (navigator.canShare && navigator.canShare({ files: [parsedFileObj] })) {
-                    await navigator.share({
-                        title: fileName,
-                        text: 'Sharing compiled PDF from DocScanner Pro.',
-                        files: [parsedFileObj]
-                    });
-                } else {
-                    triggerToast("Native web sharing unsupported on this system. Downloading directly.", "info");
-                    finalPdf.save(`${fileName}.pdf`);
-                }
-            } catch (error) {
-                console.error("Device Share failure: ", error);
-                if (error.name !== 'AbortError') {
-                    triggerToast("Sharing action aborted or blocked on this connection.", "error");
-                }
-            } finally {
-                btnShareTrigger.innerHTML = originalButtonText;
-                btnShareTrigger.disabled = false;
+            const filename = `${inputExportFilename.value.trim() || 'Scanned_Document'}.jpg`;
+            
+            if (navigator.share && navigator.canShare && navigator.canShare({ files: [new File([processedBlob], filename, { type: 'image/jpeg' })] })) {
+                const file = new File([processedBlob], filename, { type: 'image/jpeg' });
+                navigator.share({
+                    files: [file],
+                    title: 'Optimized Scanned Document',
+                    text: 'Scanned & optimized under 300KB using DocScanner Pro'
+                })
+                .then(() => triggerToast("Document shared successfully.", "success"))
+                .catch(err => console.error("Web Share API cancelled:", err));
+            } else {
+                // Clipboard copy fallback
+                navigator.clipboard.writeText(window.location.href);
+                triggerToast("Web Share API not supported on this device/browser. Copied application URL to clipboard.", "info");
             }
         });
 
-        btnResultReset.addEventListener('click', () => {
-            processedBlob = null;
-            uncroppedImageSource = null;
-            if (activeCropper) {
-                activeCropper.destroy();
-                activeCropper = null;
-            }
-            fileInput.value = '';
-            externalScannerInput.value = '';
-            
-            currentStep = 1;
-            changeInputMode(currentTab);
-            
-            compGaugeBar.style.width = '0%';
-            targetKbDisplay.textContent = '0.00 KB / 300 KB';
-        });
 
-        // Event listener for viewport adjustments to recalibrate grid frames adaptively
+        // INITIALIZATION
         window.addEventListener('resize', applyResponsiveLayout);
-
-        // Run application setup on loaded elements
-        window.addEventListener('DOMContentLoaded', () => {
-            changeSimulatorTemplate('invoice');
-            changeInputMode('camera'); 
-        });
+        
+        // Initial setup
+        applyResponsiveLayout();
+        // Default select camera
+        selectSourceTab('camera');
     </script>
 </body>
 </html>
